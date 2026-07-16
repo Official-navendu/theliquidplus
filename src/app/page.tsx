@@ -1,103 +1,175 @@
-import Image from "next/image";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @next/next/no-img-element */
+import { AnnouncementBar } from '@/components/storefront/AnnouncementBar';
+import { Header } from '@/components/storefront/Header';
+import { Hero } from '@/components/storefront/Hero';
+import { Categories } from '@/components/storefront/Categories';
+import { FeaturedCollection } from '@/components/storefront/FeaturedCollection';
+import { LimitedTimeSale } from '@/components/storefront/LimitedTimeSale';
+import { BeforeAfter } from '@/components/storefront/BeforeAfter';
+import { ExploreCollections } from '@/components/storefront/ExploreCollections';
+import { WhyUs } from '@/components/storefront/WhyUs';
+import { Testimonials } from '@/components/storefront/Testimonials';
+import { SocialGallery } from '@/components/storefront/SocialGallery';
+import { Footer } from '@/components/storefront/Footer';
+import { Process } from '@/components/storefront/Process';
+import { db } from '@/lib/db';
 
-export default function Home() {
+export default async function Home() {
+  // Query Core database categories
+  const categoriesRaw = await db.category.findMany({
+    where: { parentId: null },
+    take: 6,
+  });
+  const categoriesData = categoriesRaw.map((c) => ({
+    name: c.name,
+    image: c.imageUrl || 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400',
+    href: `/categories/${c.slug}`,
+  }));
+
+  // Query database brands
+  const brandsRaw = await db.brand.findMany({ take: 10 });
+  const brandsData = brandsRaw.length > 0 ? brandsRaw.map((b) => b.name) : undefined;
+
+  // Query database products with flags
+  const productsRaw = await db.product.findMany({
+    where: {
+      status: { in: ["ACTIVE", "DRAFT", "REVIEW"] },
+    },
+    include: {
+      brand: true,
+      productCategories: {
+        include: {
+          category: true,
+        },
+      },
+      productCollections: {
+        include: {
+          collection: true,
+        },
+      },
+      images: {
+        orderBy: {
+          sortOrder: "asc",
+        },
+      },
+      variants: true,
+      reviews: {
+        where: {
+          status: "APPROVED",
+        },
+      },
+    },
+  });
+
+  const mapProductToItem = (p: any) => {
+    const ratingVal = p.reviews.length > 0 ? p.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / p.reviews.length : 4.8;
+    const primaryImage = p.images[0]?.url || 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600';
+    const baseVariant = p.variants[0] || {};
+    const price = Number(baseVariant.price) || 1500;
+    const comparePrice = baseVariant.comparePrice ? `$${Number(baseVariant.comparePrice).toLocaleString('en-US')}` : undefined;
+
+    return {
+      id: p.id,
+      name: p.title,
+      slug: p.slug,
+      category: p.productCategories[0]?.category?.name || "Detailing Product",
+      price: `$${price.toLocaleString('en-US')}`,
+      comparePrice,
+      rating: ratingVal,
+      reviewsCount: p.reviews.length || 5,
+      image: primaryImage,
+      onSale: !!baseVariant.comparePrice,
+      brand: p.brand?.name || 'The Liquid Plus',
+    };
+  };
+
+  const featured = productsRaw
+    .filter((p) => p.isFeatured || p.productCollections?.some((pc) => pc.collection?.slug === 'featured'))
+    .map(mapProductToItem);
+  const bestSellers = productsRaw
+    .filter((p) => p.productCollections?.some((pc) => pc.collection?.slug === 'best-sellers'))
+    .map(mapProductToItem);
+  const trending = productsRaw
+    .filter((p) => p.productCollections?.some((pc) => pc.collection?.slug === 'trending'))
+    .map(mapProductToItem);
+  const newArrivals = productsRaw
+    .filter((p) => p.productCollections?.some((pc) => pc.collection?.slug === 'new-arrivals'))
+    .map(mapProductToItem);
+
+  const productsData: any = {
+    'Featured': featured.length > 0 ? featured : undefined,
+    'Best Sellers': bestSellers.length > 0 ? bestSellers : undefined,
+    'Trending': trending.length > 0 ? trending : undefined,
+    'New Arrivals': newArrivals.length > 0 ? newArrivals : undefined,
+    'Most Popular': featured.length > 0 ? featured : undefined,
+  };
+
+  // Query reviews for testimonials
+  const reviewsRaw = await db.productReview.findMany({
+    where: { status: 'APPROVED', rating: 5 },
+    include: {
+      user: { include: { customerProfile: true } },
+      product: true,
+    },
+    take: 8,
+  });
+
+  const testimonialsData = reviewsRaw.length > 0 ? reviewsRaw.map((r, idx) => {
+    const profile = r.user?.customerProfile;
+    const name = profile && profile.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : r.user?.email || 'Verified Customer';
+    return {
+      id: idx + 1,
+      name,
+      vehicle: r.product?.title || 'Product User',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150',
+      quote: r.comment || 'Amazing product results.',
+    };
+  }) : undefined;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="flex flex-col min-h-screen bg-black overflow-x-hidden font-sans">
+      {/* 1. Announcement Bar */}
+      <AnnouncementBar />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      {/* 2. Header / Navigation */}
+      <Header />
+
+      <main className="flex-grow bg-black">
+        {/* 3. Full Screen Hero (100vh Slider) */}
+        <Hero />
+
+        {/* 4. Shop by Category */}
+        <Categories categoriesData={categoriesData} />
+
+        {/* 5. Featured Collection (Tabs & 4x2 Grid) */}
+        <FeaturedCollection initialProductsData={productsData} />
+
+        {/* 6. Limited Time Sale (Split Offer Banner & Countdown) */}
+        <LimitedTimeSale />
+
+        {/* 7. Before & After Showcase Slider */}
+        <BeforeAfter />
+
+        {/* 8. Explore Collections (Split Category Tab List) */}
+        <ExploreCollections />
+
+        {/* 9. Why Choose The Liquid Plus (Advantage widgets) */}
+        <WhyUs />
+
+        {/* 10. Detailing Process Timeline */}
+        <Process />
+
+        {/* 12. Customer Testimonials Carousel */}
+        <Testimonials testimonialsData={testimonialsData} />
+
+        {/* 13. Instagram Photo Grid Gallery */}
+        <SocialGallery />
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      {/* 15. Footer Links & Copyright */}
+      <Footer />
     </div>
   );
 }
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;

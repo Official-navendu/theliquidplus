@@ -1,0 +1,20 @@
+# Build directories
+.next
+out
+dist
+build
+
+# Dependencies
+node_modules
+
+# Database
+prisma/migrations
+
+# Environment and logs
+.env
+.env.local
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,50 @@
+# ==============================================================================
+# GitHub Actions - CI/CD Pipeline Configuration (Disabled for Phase 1)
+# Enable this workflow in Phase 2 by renaming this file to ci-cd.yml.
+# ==============================================================================
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  audit-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Install Project Dependencies
+        run: npm ci --legacy-peer-deps
+        
+      - name: Lint Verification
+        run: npm run lint
+        
+      - name: Run Test Suite
+        run: npx vitest run
+        
+      - name: Next.js Compile Verification
+        run: npm run build
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test?schema=public"
+          NEXTAUTH_SECRET: "mock_secret_key_minimum_32_characters_long"
+          NEXTAUTH_URL: "http://localhost:3000"
+          CLOUDINARY_CLOUD_NAME: "mock"
+          CLOUDINARY_API_KEY: "mock"
+          CLOUDINARY_API_SECRET: "mock"
+          RESEND_API_KEY: "mock"
+          RAZORPAY_KEY_ID: "mock"
+          RAZORPAY_KEY_SECRET: "mock"
+          STRIPE_PUBLISHABLE_KEY: "mock"
+          STRIPE_SECRET_KEY: "mock"

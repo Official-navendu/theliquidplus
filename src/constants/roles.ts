@@ -1,0 +1,18 @@
+/**
+ * The Liquid Plus - RBAC Role Constants
+ */
+export const USER_ROLES = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  PRODUCT_MANAGER: 'PRODUCT_MANAGER',
+  SEO_MANAGER: 'SEO_MANAGER',
+  CONTENT_WRITER: 'CONTENT_WRITER',
+  ORDER_MANAGER: 'ORDER_MANAGER',
+  MARKETING: 'MARKETING',
+  CUSTOMER_SUPPORT: 'CUSTOMER_SUPPORT',
+  CUSTOMER: 'CUSTOMER',
+} as const;
+
+export type UserRole = keyof typeof USER_ROLES;
+
+export const ALL_ROLES = Object.values(USER_ROLES);

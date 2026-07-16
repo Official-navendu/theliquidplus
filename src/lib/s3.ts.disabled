@@ -1,0 +1,20 @@
+// ==============================================================================
+// AWS S3 Client Storage Placeholder (Disabled for Phase 1)
+// Configure AWS credentials and AWS_S3_BUCKET in Phase 2.
+// ==============================================================================
+
+import { S3Client } from '@aws-sdk/client-s3';
+import { logger } from './logger';
+
+export const s3 = new S3Client({
+  region: 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'mock',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'mock',
+  },
+});
+
+export async function uploadFileToS3(fileBuffer: Buffer, fileName: string): Promise<string> {
+  logger.info({ fileName }, 'AWS S3 file upload requested (Placeholder: Disabled)');
+  return `https://s3.amazonaws.com/${process.env.AWS_S3_BUCKET || 'mock-bucket'}/${fileName}`;
+}

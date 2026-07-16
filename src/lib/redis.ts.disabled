@@ -1,0 +1,25 @@
+// ==============================================================================
+// Redis Connection Placeholder (Disabled for Phase 1)
+// Configure Upstash or local Redis using REDIS_URL in Phase 2.
+// ==============================================================================
+
+import { Redis } from '@upstash/redis';
+import { logger } from './logger';
+
+const redisUrl = process.env.REDIS_URL;
+
+export const redis = redisUrl 
+  ? new Redis({
+      url: redisUrl.split('@')[1] ? `https://${redisUrl.split('@')[1]}` : redisUrl,
+      token: 'placeholder_token',
+    })
+  : null;
+
+export async function getCache<T>(key: string): Promise<T | null> {
+  logger.info({ key }, 'Redis cache read requested (Placeholder: Disabled)');
+  return null;
+}
+
+export async function setCache(key: string, value: unknown, ttlSeconds = 3600): Promise<void> {
+  logger.info({ key, ttlSeconds }, 'Redis cache write requested (Placeholder: Disabled)');
+}
