@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Heart, ShoppingBag, Eye, RefreshCw, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -102,10 +102,9 @@ export function FeaturedCollection({ initialProductsData }: { initialProductsDat
           {products.map((product, index) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: (index % 4) * 0.04 }}
               className="group flex flex-col space-y-3 p-4 bg-white border border-[#EAEAEA] rounded-2xl hover:border-[#FF4D00]/30 hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(0,0,0,0.06)] transition-all duration-300 relative text-left"
             >
               {/* Product Image Frame */}

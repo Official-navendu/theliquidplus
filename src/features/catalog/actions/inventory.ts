@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
 import { ApiResponse } from '@/types/api';
 import { UserType } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 
 async function assertWarehouseManager() {
   const user = await getCurrentUser();
@@ -40,6 +41,11 @@ export async function updateStockAction(variantId: string, quantity: number): Pr
       update: { quantity },
       create: { variantId, quantity },
     });
+
+    // Revalidate storefront cache to display correct stock status
+    revalidatePath('/');
+    revalidatePath('/shop');
+    revalidatePath('/products/[slug]', 'page');
 
     return {
       success: true,

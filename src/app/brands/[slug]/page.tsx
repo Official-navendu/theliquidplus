@@ -89,4 +89,4 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
     </div>
   );
 }
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;

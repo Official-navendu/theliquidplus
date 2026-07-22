@@ -76,20 +76,20 @@ export function ProductActions({ product }: ProductActionsProps) {
   return (
     <div className="space-y-4">
       {/* Quantity Selector */}
-      <div className="flex items-center space-x-3 bg-zinc-900 border border-white/5 px-3 py-2 rounded-xl w-fit">
+      <div className="flex items-center space-x-3 bg-zinc-50 border border-zinc-200/80 px-3 py-2 rounded-xl w-fit">
         <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold mr-2">Qty</span>
         <button
           onClick={handleDecrement}
           type="button"
-          className="p-1 hover:bg-white/5 rounded text-zinc-400 hover:text-white transition-all cursor-pointer border-0 bg-transparent"
+          className="p-1 hover:bg-zinc-100 rounded text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer border-0 bg-transparent"
         >
           <Minus className="h-3 w-3" />
         </button>
-        <span className="font-num text-xs font-bold text-white px-2 min-w-[20px] text-center">{qty}</span>
+        <span className="font-num text-xs font-bold text-zinc-800 px-2 min-w-[20px] text-center">{qty}</span>
         <button
           onClick={handleIncrement}
           type="button"
-          className="p-1 hover:bg-white/5 rounded text-zinc-400 hover:text-white transition-all cursor-pointer border-0 bg-transparent"
+          className="p-1 hover:bg-zinc-100 rounded text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer border-0 bg-transparent"
         >
           <Plus className="h-3 w-3" />
         </button>
@@ -99,7 +99,7 @@ export function ProductActions({ product }: ProductActionsProps) {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
         <button
           onClick={handleAddToCart}
-          className="flex-grow py-3 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 flex items-center justify-center space-x-2"
+          className="flex-grow py-3 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 flex items-center justify-center space-x-2 shadow-sm"
         >
           <ShoppingCart className="h-4 w-4" />
           <span>Add to Cart</span>
@@ -107,7 +107,7 @@ export function ProductActions({ product }: ProductActionsProps) {
 
         <button
           onClick={handleBuyNow}
-          className="flex-grow py-3 bg-white hover:bg-zinc-200 text-black text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 flex items-center justify-center"
+          className="flex-grow py-3 bg-zinc-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 flex items-center justify-center shadow-sm"
         >
           <span>Buy Now</span>
         </button>
@@ -117,7 +117,7 @@ export function ProductActions({ product }: ProductActionsProps) {
           className={`p-3 border rounded-xl transition-all cursor-pointer flex items-center justify-center ${
             inWishlist
               ? 'bg-[#FF4D00]/10 border-[#FF4D00]/30 text-[#FF4D00]'
-              : 'bg-zinc-900 border-white/10 hover:border-white text-white'
+              : 'bg-zinc-50 border-zinc-200/80 hover:border-zinc-400 text-zinc-700'
           }`}
           title="Toggle Wishlist"
         >

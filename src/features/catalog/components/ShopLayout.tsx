@@ -48,6 +48,8 @@ export function ShopLayout({ initialCategory, initialBrand, initialCollection }:
         }
       } catch (err) {
         console.error('Failed to load dynamic store products', err);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadLive();
@@ -56,11 +58,6 @@ export function ShopLayout({ initialCategory, initialBrand, initialCollection }:
   // Extract unique categories and brands for filter options
   const categoriesList = React.useMemo(() => Array.from(new Set(productsList.map((p) => p.category))), [productsList]);
   const brandsList = React.useMemo(() => Array.from(new Set(productsList.map((p) => p.brand))), [productsList]);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, [filters, sortBy]);
 
   const filteredProducts = React.useMemo(() => {
     let result = [...productsList];

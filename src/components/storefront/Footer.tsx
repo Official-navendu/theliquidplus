@@ -56,7 +56,8 @@ export function Footer() {
 
           {/* Column 2: Quick Links */}
           <div className="space-y-5">
-            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase text-[#FF4D00]">
+            {/* Heading color set to brand orange */}
+            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase !text-[#FF4D00]">
               Quick Links
             </h3>
             <ul className="space-y-3 text-xs text-zinc-400 font-light">
@@ -86,7 +87,8 @@ export function Footer() {
 
           {/* Column 3: Policies */}
           <div className="space-y-5">
-            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase text-[#FF4D00]">
+            {/* Heading color set to brand orange */}
+            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase !text-[#FF4D00]">
               Policies
             </h3>
             <ul className="space-y-3 text-xs text-zinc-400 font-light">
@@ -113,7 +115,8 @@ export function Footer() {
 
           {/* Column 4: Newsletter */}
           <div className="space-y-5">
-            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase text-[#FF4D00]">
+            {/* Heading color set to brand orange */}
+            <h3 className="text-[10px] font-black tracking-[0.25em] uppercase !text-[#FF4D00]">
               Newsletter
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed font-light tracking-wide">

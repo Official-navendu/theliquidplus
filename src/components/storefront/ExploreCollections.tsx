@@ -48,10 +48,10 @@ export function ExploreCollections() {
         {/* Title Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
           <span className="text-[8px] tracking-[0.25em] text-[#FF4D00] uppercase font-black block">
-            Specialist Selection
+            Featured Collections
           </span>
           <h2 className="text-2xl sm:text-3xl font-light uppercase tracking-widest text-[#0A0A0A]">
-            Explore Collections
+            Curated Catalog
           </h2>
           <div className="w-10 h-[1.5px] bg-[#FF4D00] mx-auto mt-1" />
         </div>

@@ -87,18 +87,29 @@ export class OrderRepository {
       });
 
       if (existingOrder && existingOrder.status !== 'CANCELLED' && status === 'CANCELLED') {
+        const variantIds = existingOrder.orderItems.map((item) => item.variantId);
+        const invItems = await tx.inventoryItem.findMany({
+          where: { variantId: { in: variantIds } },
+        });
+        const invMap = new Map(invItems.map((inv) => [inv.variantId, inv]));
+
+        const updates = [];
         for (const item of existingOrder.orderItems) {
-          const inv = await tx.inventoryItem.findFirst({
-            where: { variantId: item.variantId },
-          });
+          const inv = invMap.get(item.variantId);
           if (inv) {
-            await tx.inventoryItem.update({
-              where: { id: inv.id },
-              data: {
-                quantity: inv.quantity + item.quantity,
-              },
-            });
+            updates.push(
+              tx.inventoryItem.update({
+                where: { id: inv.id },
+                data: {
+                  quantity: inv.quantity + item.quantity,
+                },
+              })
+            );
           }
+        }
+
+        if (updates.length > 0) {
+          await Promise.all(updates);
         }
       }
 

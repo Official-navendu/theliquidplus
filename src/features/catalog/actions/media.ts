@@ -16,27 +16,24 @@ export async function getMediaImagesAction(): Promise<ApiResponse<string[]>> {
   try {
     await assertMediaManager();
     
-    // 1. Fetch images from ProductImage
-    const productImages = await db.productImage.findMany({
-      select: { url: true },
-    });
+    // Fetch all image sources concurrently to eliminate waterfall
+    const [productImages, blogImages, brandLogos, customSetting] = await Promise.all([
+      db.productImage.findMany({
+        select: { url: true },
+      }),
+      db.blogPost.findMany({
+        where: { featuredImage: { not: null } },
+        select: { featuredImage: true },
+      }),
+      db.brand.findMany({
+        where: { logoUrl: { not: null } },
+        select: { logoUrl: true },
+      }),
+      db.storeSetting.findUnique({
+        where: { key: 'media_library_images' },
+      })
+    ]);
 
-    // 2. Fetch images from BlogPost
-    const blogImages = await db.blogPost.findMany({
-      where: { featuredImage: { not: null } },
-      select: { featuredImage: true },
-    });
-
-    // 3. Fetch images from Brand logoUrl
-    const brandLogos = await db.brand.findMany({
-      where: { logoUrl: { not: null } },
-      select: { logoUrl: true },
-    });
-
-    // 4. Fetch custom media library setting
-    const customSetting = await db.storeSetting.findUnique({
-      where: { key: 'media_library_images' },
-    });
     const customImages: string[] = customSetting ? (customSetting.value as string[]) : [];
 
     // Combine all unique URLs

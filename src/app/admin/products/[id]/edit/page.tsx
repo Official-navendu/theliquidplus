@@ -66,8 +66,9 @@ export default function AdminEditProductPage({ params }: EditProductPageProps) {
       } else {
         toast.error(res.error?.message || 'Failed to update product record');
       }
-    } catch (err) {
-      toast.error('Error submitting product product modifications');
+    } catch (err: any) {
+      console.error('Update product submission error:', err);
+      toast.error(err?.message || 'Error submitting product modifications');
     } finally {
       setIsSubmitting(false);
     }

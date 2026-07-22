@@ -86,4 +86,4 @@ export default async function BlogIndexPage() {
     </div>
   );
 }
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;

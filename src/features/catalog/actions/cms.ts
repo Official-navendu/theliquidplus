@@ -5,6 +5,7 @@ import { CmsRepository } from '../repositories/cms.repository';
 import { ApiResponse } from '@/types/api';
 import { UserType, BlogStatus } from '@prisma/client';
 import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
 
 const repo = new CmsRepository();
 
@@ -63,6 +64,11 @@ export async function createPageAction(input: any): Promise<ApiResponse<any>> {
     await assertCmsManager();
     const validated = pageSchema.parse(input);
     const item = await repo.createPage(validated);
+    
+    revalidatePath('/');
+    revalidatePath('/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'CREATE_ERROR', message: error.message } };
@@ -74,6 +80,11 @@ export async function updatePageAction(id: string, input: any): Promise<ApiRespo
     await assertCmsManager();
     const validated = pageSchema.parse(input);
     const item = await repo.updatePage(id, validated);
+    
+    revalidatePath('/');
+    revalidatePath('/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
@@ -84,6 +95,11 @@ export async function deletePageAction(id: string): Promise<ApiResponse<any>> {
   try {
     await assertCmsManager();
     const item = await repo.deletePage(id);
+    
+    revalidatePath('/');
+    revalidatePath('/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'DELETE_ERROR', message: error.message } };
@@ -119,6 +135,12 @@ export async function createBlogPostAction(input: any): Promise<ApiResponse<any>
       ...validated,
       authorId: user.id,
     } as any);
+
+    revalidatePath('/');
+    revalidatePath('/blog');
+    revalidatePath('/blog/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/blog/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'CREATE_ERROR', message: error.message } };
@@ -130,6 +152,12 @@ export async function updateBlogPostAction(id: string, input: any): Promise<ApiR
     await assertCmsManager();
     const validated = blogSchema.parse(input);
     const item = await repo.updateBlogPost(id, validated as any);
+
+    revalidatePath('/');
+    revalidatePath('/blog');
+    revalidatePath('/blog/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/blog/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
@@ -140,6 +168,12 @@ export async function deleteBlogPostAction(id: string): Promise<ApiResponse<any>
   try {
     await assertCmsManager();
     const item = await repo.deleteBlogPost(id);
+
+    revalidatePath('/');
+    revalidatePath('/blog');
+    revalidatePath('/blog/[slug]', 'page');
+    if (item?.slug) revalidatePath(`/blog/${item.slug}`);
+
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
   } catch (error: any) {
     return { success: false, error: { code: 'DELETE_ERROR', message: error.message } };

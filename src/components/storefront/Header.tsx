@@ -28,6 +28,22 @@ export function Header() {
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchVal, setSearchVal] = React.useState('');
   const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
+  const accountMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+    if (accountMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [accountMenuOpen]);
+
   const { cart, wishlist, setMiniCartOpen } = useCartStore();
   const [mounted, setMounted] = React.useState(false);
 
@@ -58,9 +74,7 @@ export function Header() {
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out text-white ${
           isScrolled
             ? 'top-2 w-[92%] md:w-[94%] max-w-7xl rounded-[20px] border border-white/10 shadow-2xl bg-black/60 backdrop-blur-xl py-2 md:py-2.5 shadow-black/80'
-            : pathname === '/'
-              ? 'top-[40px] w-full max-w-none rounded-none border-b border-white/5 bg-[#0A0A0A] py-3.5 md:py-4 shadow-none'
-              : 'top-0 w-full max-w-none rounded-none border-b border-white/5 bg-[#0A0A0A] py-3.5 md:py-4 shadow-none'
+            : 'top-0 w-full max-w-none rounded-none border-b border-white/5 bg-[#0A0A0A] py-3.5 md:py-4 shadow-none'
         }`}
       >
         <div className="px-5 sm:px-8 flex items-center justify-between w-full h-9 md:h-11 relative">
@@ -143,7 +157,7 @@ export function Header() {
             </button>
 
             {/* User Profile Dropdown Menu */}
-            <div className="relative">
+            <div className="relative" ref={accountMenuRef}>
               <button
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                 className="text-zinc-300 hover:text-white transition-colors p-1 block bg-transparent border-0 cursor-pointer"
@@ -154,13 +168,7 @@ export function Header() {
 
               <AnimatePresence>
                 {accountMenuOpen && (
-                  <>
-                    {/* Invisible Backdrop to close menu */}
-                    <div
-                      className="fixed inset-0 z-40 bg-transparent"
-                      onClick={() => setAccountMenuOpen(false)}
-                    />
-                    <motion.div
+                  <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
@@ -232,7 +240,6 @@ export function Header() {
                         )}
                       </div>
                     </motion.div>
-                  </>
                 )}
               </AnimatePresence>
             </div>

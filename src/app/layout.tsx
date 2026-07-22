@@ -1,22 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Manrope, Space_Grotesk } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import { Providers } from './providers';
 import { SITE_CONFIG } from '@/config/site';
 import './globals.css';
 
-const inter = Inter({
-  variable: '--font-inter',
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
   subsets: ['latin'],
-});
-
-const manrope = Manrope({
-  variable: '--font-manrope',
-  subsets: ['latin'],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: '--font-space-grotesk',
-  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -55,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${manrope.variable} ${spaceGrotesk.variable} min-h-screen bg-[#0A0A0A] text-white antialiased`}
+        className={`${montserrat.variable} font-sans min-h-screen bg-[#0A0A0A] text-white antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

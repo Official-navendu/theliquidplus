@@ -91,6 +91,7 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 8px);
+  --font-sans: var(--font-montserrat), sans-serif;
 }
 
 @layer base {
@@ -101,7 +102,7 @@
   body {
     background-color: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;
-    font-family: var(--font-inter), sans-serif !important;
+    font-family: var(--font-montserrat), sans-serif !important;
     font-size: 14px;
     line-height: 1.6;
     letter-spacing: -0.01em;
@@ -142,7 +143,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-manrope), sans-serif !important;
+    font-family: var(--font-montserrat), sans-serif !important;
     color: hsl(var(--foreground)) !important;
     font-weight: 700;
     letter-spacing: -0.02em;

@@ -327,6 +327,7 @@ export class ProductRepository {
           description: data.description,
           status: data.status,
           isFeatured: data.isFeatured,
+          isPhysical: data.isPhysical !== undefined ? data.isPhysical : true,
           brandId: data.brandId || null,
         },
       });
@@ -372,9 +373,13 @@ export class ProductRepository {
         include: { inventoryItem: true },
       });
 
-      const updatedSkus = data.variants.map((v) => v.sku);
-      
-      const variantsToDeactivate = existingVariants.filter((ev) => !updatedSkus.includes(ev.sku));
+      const inputVariantIds = data.variants.map((v) => v.id).filter(Boolean);
+      const inputSkus = data.variants.map((v) => v.sku);
+
+      // Deactivate variants that are no longer in the payload
+      const variantsToDeactivate = existingVariants.filter(
+        (ev) => !inputVariantIds.includes(ev.id) && !inputSkus.includes(ev.sku)
+      );
       for (const ev of variantsToDeactivate) {
         await tx.productVariant.update({
           where: { id: ev.id },
@@ -383,14 +388,17 @@ export class ProductRepository {
       }
 
       for (const variant of data.variants) {
-        const existing = existingVariants.find((ev) => ev.sku === variant.sku);
+        const existing = existingVariants.find(
+          (ev) => (variant.id && ev.id === variant.id) || ev.sku === variant.sku
+        );
         let variantId: string;
-        
+
         if (existing) {
           variantId = existing.id;
           await tx.productVariant.update({
             where: { id: variantId },
             data: {
+              sku: variant.sku,
               barcode: variant.barcode || null,
               price: new Decimal(variant.price),
               comparePrice: variant.comparePrice ? new Decimal(variant.comparePrice) : null,
@@ -399,7 +407,7 @@ export class ProductRepository {
               width: variant.width ? new Decimal(variant.width) : null,
               height: variant.height ? new Decimal(variant.height) : null,
               length: variant.length ? new Decimal(variant.length) : null,
-              isActive: variant.isActive,
+              isActive: variant.isActive !== undefined ? variant.isActive : true,
             },
           });
 
@@ -429,7 +437,7 @@ export class ProductRepository {
               width: variant.width ? new Decimal(variant.width) : null,
               height: variant.height ? new Decimal(variant.height) : null,
               length: variant.length ? new Decimal(variant.length) : null,
-              isActive: variant.isActive,
+              isActive: variant.isActive !== undefined ? variant.isActive : true,
             },
           });
           variantId = createdVariant.id;
@@ -446,26 +454,31 @@ export class ProductRepository {
 
         if (variant.attributes && variant.attributes.length > 0) {
           for (const attr of variant.attributes) {
-            const attrCode = attr.name.toLowerCase().replace(/\s+/g, '-');
-            
+            if (!attr.name || !attr.name.trim() || !attr.value || !attr.value.trim()) {
+              continue;
+            }
+            const attrCode = attr.name.trim().toLowerCase().replace(/\s+/g, '-');
+
             const attribute = await tx.attribute.upsert({
               where: { code: attrCode },
               update: {},
               create: {
-                name: attr.name,
+                name: attr.name.trim(),
                 code: attrCode,
               },
             });
 
-            const attributeVal = await tx.attributeValue.findFirst({
-              where: { attributeId: attribute.id, value: attr.value },
-            }) || await tx.attributeValue.create({
-              data: {
-                attributeId: attribute.id,
-                value: attr.value,
-                label: attr.value,
-              },
-            });
+            const attributeVal =
+              (await tx.attributeValue.findFirst({
+                where: { attributeId: attribute.id, value: attr.value.trim() },
+              })) ||
+              (await tx.attributeValue.create({
+                data: {
+                  attributeId: attribute.id,
+                  value: attr.value.trim(),
+                  label: attr.value.trim(),
+                },
+              }));
 
             await tx.variantAttribute.create({
               data: {
@@ -492,28 +505,30 @@ export class ProductRepository {
       }
 
       // 6. SEO metadata rebuild
-      await tx.seoMetadata.upsert({
-        where: {
-          entityType_entityId: {
+      if (data.seoTitle || data.seoDescription || data.canonicalUrl || data.ogImage) {
+        await tx.seoMetadata.upsert({
+          where: {
+            entityType_entityId: {
+              entityType: SeoType.PRODUCT,
+              entityId: id,
+            },
+          },
+          update: {
+            metaTitle: data.seoTitle || null,
+            metaDescription: data.seoDescription || null,
+            canonicalUrl: data.canonicalUrl || null,
+            ogImage: data.ogImage || null,
+          },
+          create: {
             entityType: SeoType.PRODUCT,
             entityId: id,
+            metaTitle: data.seoTitle || null,
+            metaDescription: data.seoDescription || null,
+            canonicalUrl: data.canonicalUrl || null,
+            ogImage: data.ogImage || null,
           },
-        },
-        update: {
-          metaTitle: data.seoTitle || null,
-          metaDescription: data.seoDescription || null,
-          canonicalUrl: data.canonicalUrl || null,
-          ogImage: data.ogImage || null,
-        },
-        create: {
-          entityType: SeoType.PRODUCT,
-          entityId: id,
-          metaTitle: data.seoTitle || null,
-          metaDescription: data.seoDescription || null,
-          canonicalUrl: data.canonicalUrl || null,
-          ogImage: data.ogImage || null,
-        },
-      });
+        });
+      }
 
       return product;
     }, { maxWait: 15000, timeout: 30000 });

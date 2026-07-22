@@ -44,4 +44,4 @@ export default async function BrandsIndexPage() {
     </div>
   );
 }
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;

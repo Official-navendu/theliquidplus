@@ -47,4 +47,4 @@ export default async function CategoriesIndexPage() {
     </div>
   );
 }
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;

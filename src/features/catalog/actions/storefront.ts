@@ -241,26 +241,39 @@ export async function createStorefrontOrderAction(input: {
     }
 
     const invoiceRef = `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const productIds = input.items.map((item) => item.productId);
+    const products = await db.product.findMany({
+      where: { id: { in: productIds } },
+      include: { variants: true },
+    });
+
+    const productsMap = new Map(products.map((p) => [p.id, p]));
+    const variantIds = products.flatMap((p) => p.variants.map((v) => v.id));
+
+    const inventoryItems = await db.inventoryItem.findMany({
+      where: { variantId: { in: variantIds } },
+    });
+    const inventoryMap = new Map(inventoryItems.map((inv) => [inv.variantId, inv]));
+
     const orderItemsData = [];
+    const inventoryUpdates = [];
+
     for (const item of input.items) {
-      const product = await db.product.findUnique({
-        where: { id: item.productId },
-        include: { variants: true },
-      });
+      const product = productsMap.get(item.productId);
       if (!product) continue;
       const variant = product.variants[0];
       if (!variant) continue;
 
-      const inv = await db.inventoryItem.findFirst({
-        where: { variantId: variant.id }
-      });
+      const inv = inventoryMap.get(variant.id);
       if (inv) {
-        await db.inventoryItem.update({
-          where: { id: inv.id },
-          data: {
-            quantity: Math.max(0, inv.quantity - item.quantity)
-          }
-        });
+        inventoryUpdates.push(
+          db.inventoryItem.update({
+            where: { id: inv.id },
+            data: {
+              quantity: Math.max(0, inv.quantity - item.quantity),
+            },
+          })
+        );
       }
 
       orderItemsData.push({
@@ -272,6 +285,10 @@ export async function createStorefrontOrderAction(input: {
         taxRate: 18,
         taxAmount: Number(variant.price) * item.quantity * 0.18,
       });
+    }
+
+    if (inventoryUpdates.length > 0) {
+      await Promise.all(inventoryUpdates);
     }
 
     const order = await db.order.create({

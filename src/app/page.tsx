@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @next/next/no-img-element */
-import { AnnouncementBar } from '@/components/storefront/AnnouncementBar';
+// import { AnnouncementBar } from '@/components/storefront/AnnouncementBar';
 import { Header } from '@/components/storefront/Header';
 import { Hero } from '@/components/storefront/Hero';
-import { Categories } from '@/components/storefront/Categories';
 import { FeaturedCollection } from '@/components/storefront/FeaturedCollection';
 import { LimitedTimeSale } from '@/components/storefront/LimitedTimeSale';
 import { BeforeAfter } from '@/components/storefront/BeforeAfter';
@@ -12,54 +11,70 @@ import { Testimonials } from '@/components/storefront/Testimonials';
 import { SocialGallery } from '@/components/storefront/SocialGallery';
 import { Footer } from '@/components/storefront/Footer';
 import { Process } from '@/components/storefront/Process';
+import PremiumScrollingCategories from '@/components/home/PremiumScrollingCategories';
 import { db } from '@/lib/db';
+import AnnouncementBar from '@/components/storefront/AnnouncementBar';
 
 export default async function Home() {
-  // Query Core database categories
-  const categoriesRaw = await db.category.findMany({
-    where: { parentId: null },
-    take: 6,
-  });
+  // Query all database resources concurrently to avoid waterfalls
+  const [categoriesRaw, brandsRaw, productsRaw, reviewsRaw] = await Promise.all([
+    db.category.findMany({
+      where: {
+        parentId: null,
+        status: true,
+      },
+      orderBy: {
+        sortOrder: 'asc',
+      },
+    }),
+    db.brand.findMany({ take: 10 }),
+    db.product.findMany({
+      where: {
+        status: { in: ["ACTIVE", "DRAFT", "REVIEW"] },
+      },
+      include: {
+        brand: true,
+        productCategories: {
+          include: {
+            category: true,
+          },
+        },
+        productCollections: {
+          include: {
+            collection: true,
+          },
+        },
+        images: {
+          orderBy: {
+            sortOrder: "asc",
+          },
+        },
+        variants: true,
+        reviews: {
+          where: {
+            status: "APPROVED",
+          },
+        },
+      },
+    }),
+    db.productReview.findMany({
+      where: { status: 'APPROVED', rating: 5 },
+      include: {
+        user: { include: { customerProfile: true } },
+        product: true,
+      },
+      take: 8,
+    }),
+  ]);
+
   const categoriesData = categoriesRaw.map((c) => ({
+    id: c.id,
     name: c.name,
-    image: c.imageUrl || 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400',
-    href: `/categories/${c.slug}`,
+    slug: c.slug,
+    imageUrl: c.imageUrl,
   }));
 
-  // Query database brands
-  const brandsRaw = await db.brand.findMany({ take: 10 });
   const brandsData = brandsRaw.length > 0 ? brandsRaw.map((b) => b.name) : undefined;
-
-  // Query database products with flags
-  const productsRaw = await db.product.findMany({
-    where: {
-      status: { in: ["ACTIVE", "DRAFT", "REVIEW"] },
-    },
-    include: {
-      brand: true,
-      productCategories: {
-        include: {
-          category: true,
-        },
-      },
-      productCollections: {
-        include: {
-          collection: true,
-        },
-      },
-      images: {
-        orderBy: {
-          sortOrder: "asc",
-        },
-      },
-      variants: true,
-      reviews: {
-        where: {
-          status: "APPROVED",
-        },
-      },
-    },
-  });
 
   const mapProductToItem = (p: any) => {
     const ratingVal = p.reviews.length > 0 ? p.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / p.reviews.length : 4.8;
@@ -104,16 +119,6 @@ export default async function Home() {
     'Most Popular': featured.length > 0 ? featured : undefined,
   };
 
-  // Query reviews for testimonials
-  const reviewsRaw = await db.productReview.findMany({
-    where: { status: 'APPROVED', rating: 5 },
-    include: {
-      user: { include: { customerProfile: true } },
-      product: true,
-    },
-    take: 8,
-  });
-
   const testimonialsData = reviewsRaw.length > 0 ? reviewsRaw.map((r, idx) => {
     const profile = r.user?.customerProfile;
     const name = profile && profile.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : r.user?.email || 'Verified Customer';
@@ -127,42 +132,39 @@ export default async function Home() {
   }) : undefined;
 
   return (
-    <div className="flex flex-col min-h-screen bg-black overflow-x-hidden font-sans">
-      {/* 1. Announcement Bar */}
-      <AnnouncementBar />
+    <div className="flex flex-col min-h-screen bg-black overflow-x-clip font-sans">
+      {/* 1. Announcement Bar (Temporarily Disabled - Easy to Re-enable) */}
+      {/* <AnnouncementBar /> */}
 
       {/* 2. Header / Navigation */}
       <Header />
 
       <main className="flex-grow bg-black">
-        {/* 3. Full Screen Hero (100vh Slider) */}
+        {/* 1. Hero Section */}
         <Hero />
 
-        {/* 4. Shop by Category */}
-        <Categories categoriesData={categoriesData} />
-
-        {/* 5. Featured Collection (Tabs & 4x2 Grid) */}
+        {/* 2. Featured Collection (Tabs & 4x2 Grid) */}
         <FeaturedCollection initialProductsData={productsData} />
 
-        {/* 6. Limited Time Sale (Split Offer Banner & Countdown) */}
-        <LimitedTimeSale />
+        {/* 3. Premium Immersive Scrolling Category Experience */}
+        <PremiumScrollingCategories categories={categoriesData} />
 
-        {/* 7. Before & After Showcase Slider */}
+        {/* 5. Limited Time Sale (Temporarily Disabled) */}
+        {/* <LimitedTimeSale /> */}
+
+        {/* 6. Before & After Showcase Slider */}
         <BeforeAfter />
 
-        {/* 8. Explore Collections (Split Category Tab List) */}
-        <ExploreCollections />
-
-        {/* 9. Why Choose The Liquid Plus (Advantage widgets) */}
+        {/* 7. Why Choose The Liquid Plus (Advantage widgets) */}
         <WhyUs />
 
-        {/* 10. Detailing Process Timeline */}
+        {/* 8. Detailing Process Timeline */}
         <Process />
 
-        {/* 12. Customer Testimonials Carousel */}
+        {/* 9. Customer Testimonials Carousel */}
         <Testimonials testimonialsData={testimonialsData} />
 
-        {/* 13. Instagram Photo Grid Gallery */}
+        {/* 10. Instagram Photo Grid Gallery */}
         <SocialGallery />
       </main>
 
@@ -171,5 +173,4 @@ export default async function Home() {
     </div>
   );
 }
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 300;

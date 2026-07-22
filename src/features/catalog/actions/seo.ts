@@ -7,11 +7,13 @@ import { revalidatePath } from 'next/cache';
 
 export async function getAllSeoRoutesAction() {
   try {
-    const products = await db.product.findMany({ select: { id: true, title: true, slug: true } });
-    const categories = await db.category.findMany({ select: { id: true, name: true, slug: true } });
-    const cmsPages = await db.cmsPage.findMany({ select: { id: true, title: true, slug: true } });
+    const [products, categories, cmsPages, metadataList] = await Promise.all([
+      db.product.findMany({ select: { id: true, title: true, slug: true } }),
+      db.category.findMany({ select: { id: true, name: true, slug: true } }),
+      db.cmsPage.findMany({ select: { id: true, title: true, slug: true } }),
+      db.seoMetadata.findMany(),
+    ]);
 
-    // Static pages
     const staticPages = [
       { id: 'home', title: 'Homepage', slug: '/' },
       { id: 'shop', title: 'Shop', slug: '/shop' },
@@ -21,9 +23,6 @@ export async function getAllSeoRoutesAction() {
       { id: 'cart', title: 'Shopping Cart', slug: '/cart' },
       { id: 'checkout', title: 'Checkout', slug: '/checkout' },
     ];
-
-    // Fetch existing metadata
-    const metadataList = await db.seoMetadata.findMany();
 
     const routes: any[] = [];
 

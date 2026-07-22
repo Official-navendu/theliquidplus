@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const testimonials = [
   {
@@ -108,10 +109,12 @@ export function Testimonials({ testimonialsData }: { testimonialsData?: Testimon
 
               <div className="flex items-center space-x-2 pt-2 border-t border-[#EAEAEA] group-hover:border-white/10 transition-colors duration-300">
                 <div className="relative h-7 w-7 rounded-full overflow-hidden border border-[#EAEAEA] group-hover:border-white/20">
-                  <img
+                  <Image
                     src={test.avatar}
                     alt={test.name}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="28px"
+                    className="object-cover"
                   />
                 </div>
                 <div>
@@ -145,10 +148,12 @@ export function Testimonials({ testimonialsData }: { testimonialsData?: Testimon
 
               <div className="flex items-center space-x-2 pt-2 border-t border-[#EAEAEA] group-hover:border-white/10 transition-colors duration-300">
                 <div className="relative h-7 w-7 rounded-full overflow-hidden border border-[#EAEAEA] group-hover:border-white/20">
-                  <img
+                  <Image
                     src={test.avatar}
                     alt={test.name}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="28px"
+                    className="object-cover"
                   />
                 </div>
                 <div>
