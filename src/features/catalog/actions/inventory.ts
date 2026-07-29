@@ -13,7 +13,7 @@ async function assertWarehouseManager() {
   if (!allowed.includes(user.role)) throw new Error('Insufficient permissions');
 }
 
-export async function getInventoryAction(): Promise<ApiResponse<any[]>> {
+export async function getInventoryAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     await assertWarehouseManager();
     const list = await db.productVariant.findMany({
@@ -28,12 +28,15 @@ export async function getInventoryAction(): Promise<ApiResponse<any[]>> {
       success: true,
       data: JSON.parse(JSON.stringify(list)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function updateStockAction(variantId: string, quantity: number): Promise<ApiResponse<any>> {
+export async function updateStockAction(
+  variantId: string,
+  quantity: number,
+): Promise<ApiResponse<SafeAny>> {
   try {
     await assertWarehouseManager();
     const item = await db.inventoryItem.upsert({
@@ -51,7 +54,7 @@ export async function updateStockAction(variantId: string, quantity: number): Pr
       success: true,
       data: JSON.parse(JSON.stringify(item)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
   }
 }

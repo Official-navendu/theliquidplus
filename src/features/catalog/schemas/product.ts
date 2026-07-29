@@ -13,10 +13,14 @@ export const productVariantSchema = z.object({
   height: z.number().optional().nullable(),
   length: z.number().optional().nullable(),
   isActive: z.boolean(),
-  attributes: z.array(z.object({
-    name: z.string(), // e.g. Size, Color
-    value: z.string(), // e.g. 500ml, Red
-  })).optional(),
+  attributes: z
+    .array(
+      z.object({
+        name: z.string(), // e.g. Size, Color
+        value: z.string(), // e.g. 500ml, Red
+      }),
+    )
+    .optional(),
 });
 
 export const productSchema = z.object({
@@ -29,11 +33,14 @@ export const productSchema = z.object({
   brandId: z.string().optional().nullable(),
   categoryIds: z.array(z.string()),
   collectionIds: z.array(z.string()),
-  images: z.array(z.object({
-    url: z.string().url('Invalid image URL'),
-    altText: z.string().optional().nullable(),
-    sortOrder: z.number(),
-  })),
+  homepageCollections: z.array(z.string()),
+  images: z.array(
+    z.object({
+      url: z.string().url('Invalid image URL'),
+      altText: z.string().optional().nullable(),
+      sortOrder: z.number(),
+    }),
+  ),
   variants: z.array(productVariantSchema).min(1, 'At least one variant is required'),
   seoTitle: z.string().optional().nullable(),
   seoDescription: z.string().optional().nullable(),

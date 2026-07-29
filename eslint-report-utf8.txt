@@ -1,0 +1,480 @@
+﻿
+> theliquidplus@0.1.0 lint
+> eslint
+
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\blog\[id]\edit\page.tsx
+   23:54   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   77:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  107:35   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  123:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  192:218  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  202:39   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\blog\[id]\page.tsx
+  22:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  36:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  79:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\blog\new\page.tsx
+   14:54   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   74:35   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   90:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  155:218  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  165:39   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\blog\page.tsx
+   7:35  warning  'Calendar' is defined but never used             @typescript-eslint/no-unused-vars
+   7:45  warning  'Sparkles' is defined but never used             @typescript-eslint/no-unused-vars
+  13:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  16:10  warning  'isDeleting' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  49:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  86:21  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  96:31  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\brands\page.tsx
+   18:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   21:58  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   25:10  warning  'isDeleting' is assigned a value but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   57:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   68:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   96:39  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  112:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  128:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  181:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  190:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  283:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\categories\page.tsx
+   12:30  warning  'ShieldAlert' is defined but never used          @typescript-eslint/no-unused-vars
+   12:51  warning  'HelpCircle' is defined but never used           @typescript-eslint/no-unused-vars
+   18:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   21:64  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   25:10  warning  'isDeleting' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   59:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+   70:33  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  102:39  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  124:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  140:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  182:25  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\cms\pages\[id]\edit\page.tsx
+   58:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+   88:35   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   98:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  157:218  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  167:39   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\cms\pages\[id]\page.tsx
+  22:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\cms\pages\new\page.tsx
+   56:35   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   66:14   warning  'err' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  121:218  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  131:39   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\cms\pages\page.tsx
+   7:35  warning  'FileText' is defined but never used             @typescript-eslint/no-unused-vars
+  13:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  16:10  warning  'isDeleting' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  49:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  84:21  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\customers\[id]\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\customers\page.tsx
+    7:15   warning  'Edit3' is defined but never used                       @typescript-eslint/no-unused-vars
+    7:22   warning  'ShieldAlert' is defined but never used                 @typescript-eslint/no-unused-vars
+    7:35   warning  'Users' is defined but never used                       @typescript-eslint/no-unused-vars
+    7:42   warning  'Sparkles' is defined but never used                    @typescript-eslint/no-unused-vars
+   13:42   error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   14:10   warning  'total' is assigned a value but never used              @typescript-eslint/no-unused-vars
+   18:18   warning  'setSearch' is assigned a value but never used          @typescript-eslint/no-unused-vars
+   19:26   warning  'setSelectedStatus' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   20:16   warning  'setPage' is assigned a value but never used            @typescript-eslint/no-unused-vars
+   39:14   warning  'err' is defined but never used                         @typescript-eslint/no-unused-vars
+   60:14   warning  'err' is defined but never used                         @typescript-eslint/no-unused-vars
+   70:101  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  102:21   error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  165:31   error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\inventory\page.tsx
+   7:27  warning  'RotateCcw' is defined but never used     @typescript-eslint/no-unused-vars
+  11:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  53:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  78:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\marketing\coupons\page.tsx
+   20:42  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   22:52  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   32:60  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   36:10  warning  'isDeleting' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   38:35  warning  'setValue' is assigned a value but never used    @typescript-eslint/no-unused-vars
+   38:52  warning  'watch' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   67:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+   78:31  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   91:10  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  108:10  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  126:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  140:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  145:39  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  170:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  186:14  warning  'err' is defined but never used                  @typescript-eslint/no-unused-vars
+  252:25  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\media\page.tsx
+    5:27  warning  'AdminCard' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   24:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   58:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   81:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  125:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\orders\[id]\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\orders\page.tsx
+    7:15  warning  'ShieldAlert' is defined but never used                 @typescript-eslint/no-unused-vars
+    7:28  warning  'ShoppingBag' is defined but never used                 @typescript-eslint/no-unused-vars
+    7:41  warning  'FileText' is defined but never used                    @typescript-eslint/no-unused-vars
+    7:51  warning  'CheckCircle' is defined but never used                 @typescript-eslint/no-unused-vars
+   13:42  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   14:10  warning  'total' is assigned a value but never used              @typescript-eslint/no-unused-vars
+   18:18  warning  'setSearch' is assigned a value but never used          @typescript-eslint/no-unused-vars
+   19:26  warning  'setSelectedStatus' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   20:16  warning  'setPage' is assigned a value but never used            @typescript-eslint/no-unused-vars
+   39:14  warning  'err' is defined but never used                         @typescript-eslint/no-unused-vars
+   61:14  warning  'err' is defined but never used                         @typescript-eslint/no-unused-vars
+   93:21  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  113:31  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  129:31  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\products\[id]\edit\page.tsx
+  25:48  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:54  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:73  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:93  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:16  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  58:37  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  69:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\products\[id]\page.tsx
+    6:10  warning  'AdminPageHeader' is defined but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+    6:38  warning  'AdminSection' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+    8:44  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    8:55  warning  'Percent' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    8:64  warning  'ShieldCheck' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    8:77  warning  'Layers' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    8:85  warning  'FileText' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   22:48  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   24:10  warning  'isDeleting' is assigned a value but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   36:16  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   55:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   68:9   warning  'stockQty' is assigned a value but never used                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   69:62  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   70:64  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  125:43  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  128:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  162:46  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  163:65  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\products\new\page.tsx
+  14:54  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:73  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:93  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:16  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  38:37  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:14  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\products\page.tsx
+   16:41  warning  'FileSpreadsheet' is defined but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   16:70  warning  'ShieldAlert' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   22:9   warning  'router' is assigned a value but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   23:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   24:10  warning  'total' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   26:10  warning  'setup' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   26:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   29:18  warning  'setSearch' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   30:28  warning  'setSelectedCategory' is assigned a value but never used                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   31:25  warning  'setSelectedBrand' is assigned a value but never used                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   32:26  warning  'setSelectedStatus' is assigned a value but never used                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   33:18  warning  'setSortBy' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   34:16  warning  'setPage' is assigned a value but never used                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   39:10  warning  'isDeleting' is assigned a value but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   51:77  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   88:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  102:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  119:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  139:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  148:63  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  155:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  260:21  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  269:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  304:33  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\reviews\page.tsx
+    7:33  warning  'MessageSquare' is defined but never used       @typescript-eslint/no-unused-vars
+   12:42  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   16:18  warning  'setSearch' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   17:18  warning  'setStatus' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   32:14  warning  'err' is defined but never used                 @typescript-eslint/no-unused-vars
+   52:14  warning  'err' is defined but never used                 @typescript-eslint/no-unused-vars
+   66:14  warning  'err' is defined but never used                 @typescript-eslint/no-unused-vars
+   98:21  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  142:31  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\admin\seo\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\blog\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\brands\[slug]\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\brands\page.tsx
+  32:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\categories\[slug]\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\categories\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any', '@typescript-eslint/no-unused-vars', or '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\app\page.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\BeforeAfter.tsx
+  4:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\FeaturedCollection.tsx
+  4:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\Footer.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any', '@typescript-eslint/no-unused-vars', or '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\Header.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any', '@typescript-eslint/no-unused-vars', or '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\Hero.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any', '@typescript-eslint/no-unused-vars', or '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\LimitedTimeSale.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\Testimonials.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\components\storefront\WhyUs.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any', '@typescript-eslint/no-unused-vars', or '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\brand.ts
+  29:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:86  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  83:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\category.ts
+  32:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:78  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:89  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  74:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\cms.ts
+    6:20  warning  'BlogStatus' is defined but never used    @typescript-eslint/no-unused-vars
+   41:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   46:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:74  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   56:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   61:47  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   61:73  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   67:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:59  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:85  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:73  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   88:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:65  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   99:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:78  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:51  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:77  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:10  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  123:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:89  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:77  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  149:70  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  159:97  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  164:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\customerAdmin.ts
+  22:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:78   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:103  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\dashboard.ts
+  5:10  warning  'OrderStatus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\inventory.ts
+  15:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:99  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\marketing.ts
+    6:20  warning  'CouponType' is defined but never used    @typescript-eslint/no-unused-vars
+   31:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   36:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:76  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   46:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:49  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:75  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   55:55  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   57:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:87  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   66:59  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   68:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   73:75  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:78  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:71  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\media.ts
+   53:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   58:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\order.ts
+    7:10  warning  'z' is defined but never used             @typescript-eslint/no-unused-vars
+   23:34  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   31:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   36:75  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   44:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   53:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   61:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\product.ts
+    7:10   warning  'handleAppError' is defined but never used  @typescript-eslint/no-unused-vars
+   48:34   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   62:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   76:77   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   94:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  108:85   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  118:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  132:97   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  142:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  156:89   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  165:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  179:77   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  188:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  202:84   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  210:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  224:105  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  232:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  247:11   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  248:15   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  249:16   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  267:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  281:79   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  303:56   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  304:59   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  305:42   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  310:44   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  322:51   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  339:19   error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\review.ts
+  22:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:103  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:75   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\actions\storefront.ts
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\components\AddToCartButton.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\components\CartPageContainer.tsx
+  6:25  warning  'Plus' is defined but never used   @typescript-eslint/no-unused-vars
+  6:31  warning  'Minus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\components\CheckoutPageContainer.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\components\ProductActions.tsx
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\components\ProductInfo.tsx
+  4:17  warning  'ShoppingBag' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\repositories\brand.repository.ts
+  17:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\repositories\customerAdmin.repository.ts
+  9:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\repositories\order.repository.ts
+  14:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\repositories\product.repository.ts
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\DELLL\Desktop\theliquidplus\src\features\catalog\repositories\review.repository.ts
+  14:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 354 problems (206 errors, 148 warnings)
+  0 errors and 27 warnings potentially fixable with the `--fix` option.
+

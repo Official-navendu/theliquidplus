@@ -10,7 +10,7 @@ import { CompareDrawer } from '@/features/catalog/components/CompareDrawer';
 import { SessionProvider } from 'next-auth/react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  // Creating QueryClient inside a useState hook prevents sharing query cache 
+  // Creating QueryClient inside a useState hook prevents sharing query cache
   // between users on the server side under Concurrent Features.
   const [queryClient] = React.useState(
     () =>
@@ -22,7 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             retry: 1,
           },
         },
-      })
+      }),
   );
 
   return (
@@ -32,7 +32,28 @@ export function Providers({ children }: { children: React.ReactNode }) {
           {children}
           <MiniCart />
           <CompareDrawer />
-          <Toaster closeButton position="top-right" richColors />
+          <Toaster
+            closeButton
+            position="top-right"
+            toastOptions={{
+              className:
+                '!bg-white/85 !backdrop-blur-xl !border-zinc-200/80 !shadow-[0_8px_30px_rgba(0,0,0,0.06)] !p-4 !rounded-2xl !flex !items-center !gap-3 !text-zinc-900 !font-sans',
+              style: {
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(228, 228, 231, 0.8)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
+                borderRadius: '16px',
+                color: '#18181b',
+              },
+              classNames: {
+                success: '!border-l-4 !border-l-green-500',
+                error: '!border-l-4 !border-l-red-500',
+                warning: '!border-l-4 !border-l-amber-500',
+                info: '!border-l-4 !border-l-[#FF4D00]',
+              },
+            }}
+          />
         </QueryClientProvider>
       </ThemeProvider>
     </SessionProvider>

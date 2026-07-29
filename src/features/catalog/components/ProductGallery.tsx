@@ -34,14 +34,14 @@ export function ProductGallery({ images }: ProductGalleryProps) {
     <div className="space-y-4">
       {/* Main Image Viewport */}
       <div
-        className="relative aspect-square w-full bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden group select-none"
+        className="group relative aspect-square w-full overflow-hidden rounded-xl border border-white/5 bg-[#0a0a0a] select-none"
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
       >
         {/* Zoomed State */}
         <div
-          className="absolute inset-0 z-10 pointer-events-none transition-opacity duration-300"
+          className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
           style={{
             opacity: isZoomed ? 1 : 0,
             backgroundImage: `url(${images[activeIndex]})`,
@@ -59,16 +59,17 @@ export function ProductGallery({ images }: ProductGalleryProps) {
           priority
           sizes="(max-width: 1024px) 100vw, 600px"
           className="object-cover"
+          unoptimized={images[activeIndex]?.startsWith('data:')}
         />
 
         {/* Controls */}
-        <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-x-4 top-1/2 z-20 flex -translate-y-1/2 justify-between opacity-0 transition-opacity group-hover:opacity-100">
           <button
             onClick={(e) => {
               e.stopPropagation();
               prevImage();
             }}
-            className="p-3 bg-black/60 hover:bg-[#FF4D00]/20 text-white border border-white/10 hover:border-[#FF4D00]/30 rounded-full"
+            className="rounded-full border border-white/10 bg-black/60 p-3 text-white hover:border-[#FF4D00]/30 hover:bg-[#FF4D00]/20"
             aria-label="Previous image"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -78,7 +79,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
               e.stopPropagation();
               nextImage();
             }}
-            className="p-3 bg-black/60 hover:bg-[#FF4D00]/20 text-white border border-white/10 hover:border-[#FF4D00]/30 rounded-full"
+            className="rounded-full border border-white/10 bg-black/60 p-3 text-white hover:border-[#FF4D00]/30 hover:bg-[#FF4D00]/20"
             aria-label="Next image"
           >
             <ChevronRight className="h-5 w-5" />
@@ -88,7 +89,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
         {/* Lightbox Launcher */}
         <button
           onClick={() => setIsLightboxOpen(true)}
-          className="absolute bottom-4 right-4 z-20 p-3 bg-black/60 hover:bg-[#FF4D00]/20 text-white border border-white/10 hover:border-[#FF4D00]/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute right-4 bottom-4 z-20 rounded-full border border-white/10 bg-black/60 p-3 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:border-[#FF4D00]/30 hover:bg-[#FF4D00]/20"
           aria-label="View Fullscreen"
         >
           <Maximize2 className="h-4 w-4" />
@@ -96,12 +97,12 @@ export function ProductGallery({ images }: ProductGalleryProps) {
       </div>
 
       {/* Thumbnail Gallery (Supports 8+ Images) */}
-      <div className="grid grid-cols-5 sm:grid-cols-8 gap-2">
+      <div className="grid grid-cols-5 gap-2 sm:grid-cols-8">
         {images.map((img, index) => (
           <button
             key={index}
             onClick={() => setActiveIndex(index)}
-            className={`relative aspect-square w-full rounded-md overflow-hidden bg-[#0a0a0a] border transition-all ${
+            className={`relative aspect-square w-full overflow-hidden rounded-md border bg-[#0a0a0a] transition-all ${
               activeIndex === index ? 'border-[#FF4D00]' : 'border-white/5 hover:border-white/20'
             }`}
           >
@@ -110,7 +111,8 @@ export function ProductGallery({ images }: ProductGalleryProps) {
               alt={`Thumbnail ${index + 1}`}
               fill
               sizes="80px"
-              className="object-cover opacity-80 hover:opacity-100 transition-opacity"
+              className="object-cover opacity-80 transition-opacity hover:opacity-100"
+              unoptimized={img?.startsWith('data:')}
             />
           </button>
         ))}
@@ -123,12 +125,12 @@ export function ProductGallery({ images }: ProductGalleryProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-6"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-6"
           >
             {/* Close Button */}
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-8 right-8 text-zinc-400 hover:text-white p-2 border border-white/10 rounded-full transition-colors"
+              className="absolute top-8 right-8 rounded-full border border-white/10 p-2 text-zinc-400 transition-colors hover:text-white"
               aria-label="Close Lightbox"
             >
               <X className="h-6 w-6" />
@@ -137,26 +139,27 @@ export function ProductGallery({ images }: ProductGalleryProps) {
             {/* Slider Controls */}
             <button
               onClick={prevImage}
-              className="absolute left-8 p-4 bg-white/5 hover:bg-[#FF4D00]/10 border border-white/10 hover:border-[#FF4D00]/20 rounded-full text-white transition-colors"
+              className="absolute left-8 rounded-full border border-white/10 bg-white/5 p-4 text-white transition-colors hover:border-[#FF4D00]/20 hover:bg-[#FF4D00]/10"
               aria-label="Previous Image"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-8 p-4 bg-white/5 hover:bg-[#FF4D00]/10 border border-white/10 hover:border-[#FF4D00]/20 rounded-full text-white transition-colors"
+              className="absolute right-8 rounded-full border border-white/10 bg-white/5 p-4 text-white transition-colors hover:border-[#FF4D00]/20 hover:bg-[#FF4D00]/10"
               aria-label="Next Image"
             >
               <ChevronRight className="h-6 w-6" />
             </button>
 
             {/* Lightbox Image Container */}
-            <div className="relative w-full max-w-4xl h-[80vh]">
+            <div className="relative h-[80vh] w-full max-w-4xl">
               <Image
                 src={images[activeIndex]}
                 alt="Fullscreen Product View"
                 fill
                 className="object-contain"
+                unoptimized={images[activeIndex]?.startsWith('data:')}
               />
             </div>
           </motion.div>

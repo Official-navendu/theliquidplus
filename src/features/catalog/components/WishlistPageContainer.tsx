@@ -16,47 +16,56 @@ export function WishlistPageContainer() {
   };
 
   return (
-    <div className="bg-black text-white min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-6 space-y-8">
-        
+    <div className="min-h-screen bg-black py-12 text-white">
+      <div className="mx-auto max-w-7xl space-y-8 px-6">
         {/* Breadcrumbs */}
-        <div className="text-[10px] tracking-widest uppercase text-[#B5B5B5] flex items-center space-x-2">
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+        <div className="flex items-center space-x-2 text-[10px] tracking-widest text-[#B5B5B5] uppercase">
+          <Link href="/" className="transition-colors hover:text-white">
+            Home
+          </Link>
           <span>/</span>
-          <span className="text-[#FF4D00] font-medium">Your Wishlist</span>
+          <span className="font-medium text-[#FF4D00]">Your Wishlist</span>
         </div>
 
-        <h1 className="text-3xl font-light uppercase tracking-wider text-white">Your Wishlist</h1>
+        <h1 className="text-3xl font-light tracking-wider text-white uppercase">Your Wishlist</h1>
 
         {wishlist.length === 0 ? (
-          <div className="py-20 border border-white/5 bg-[#0a0a0a] rounded-xl text-center flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border border-white/5 bg-[#0a0a0a] py-20 text-center">
             <span className="text-4xl">❤️</span>
-            <h3 className="text-sm font-semibold tracking-widest uppercase text-[#E5E5E5]">Your Wishlist is Empty</h3>
-            <p className="text-xs text-[#B5B5B5] max-w-xs font-light leading-relaxed">
+            <h3 className="text-sm font-semibold tracking-widest text-[#E5E5E5] uppercase">
+              Your Wishlist is Empty
+            </h3>
+            <p className="max-w-xs text-xs leading-relaxed font-light text-[#B5B5B5]">
               Bookmark premium detailing formulas and nano coatings to inspect them later.
             </p>
             <Link
               href="/shop"
-              className="bg-[#FF4D00] text-white hover:bg-[#E04400] text-[10px] tracking-widest uppercase font-bold px-8 py-3.5 hover:scale-105 hover:shadow-[0_0_15px_rgba(255,77,0,0.45)] transition-all rounded-xl inline-block cursor-pointer"
+              className="inline-block cursor-pointer rounded-xl bg-[#FF4D00] px-8 py-3.5 text-[10px] font-bold tracking-widest text-white uppercase transition-all hover:scale-105 hover:bg-[#E04400] hover:shadow-[0_0_15px_rgba(255,77,0,0.45)]"
             >
               Explore Shop
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {wishlist.map((product) => (
               <div
                 key={product.id}
-                className="group flex flex-col space-y-4 relative bg-[#0a0a0a] p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+                className="group relative flex flex-col space-y-4 rounded-xl border border-white/5 bg-[#0a0a0a] p-4 transition-colors hover:border-white/10"
               >
                 {/* Product Image Frame */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#111] rounded-lg">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" />
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[#111]">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    unoptimized={product.image?.startsWith('data:')}
+                  />
 
                   {/* Actions overlay */}
                   <button
                     onClick={() => removeFromWishlist(product.id)}
-                    className="absolute top-3 right-3 z-10 bg-black/60 hover:bg-red-500/20 text-[#E5E5E5] hover:text-red-500 p-2 rounded-full border border-white/10 transition-colors cursor-pointer"
+                    className="absolute top-3 right-3 z-10 cursor-pointer rounded-full border border-white/10 bg-black/60 p-2 text-[#E5E5E5] transition-colors hover:bg-red-500/20 hover:text-red-500"
                     aria-label="Remove item"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -65,14 +74,14 @@ export function WishlistPageContainer() {
 
                 {/* Info block */}
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[9px] uppercase tracking-wider text-[#B5B5B5]">
+                  <div className="flex items-center justify-between text-[9px] tracking-wider text-[#B5B5B5] uppercase">
                     <span>{product.brand}</span>
                     <span>{product.category}</span>
                   </div>
-                  <h3 className="text-xs font-semibold text-[#E5E5E5] line-clamp-1">
+                  <h3 className="line-clamp-1 text-xs font-semibold text-[#E5E5E5]">
                     <Link href={`/products/${product.slug}`}>{product.name}</Link>
                   </h3>
-                  
+
                   {/* Rating */}
                   <div className="flex items-center space-x-1 text-[9px] text-[#B5B5B5]">
                     <span className="text-[#FF4D00]">★ ★ ★ ★ ★</span>
@@ -80,11 +89,17 @@ export function WishlistPageContainer() {
                   </div>
 
                   {/* Price info */}
-                  <div className="flex justify-between items-center pt-2">
+                  <div className="flex items-center justify-between pt-2">
                     <span className="text-xs font-semibold text-white">
-                      {product.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}
+                      {product.price.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      })}
                     </span>
-                    <span className={`text-[8px] uppercase tracking-widest font-black ${product.inStock ? 'text-green-500' : 'text-red-500'}`}>
+                    <span
+                      className={`text-[8px] font-black tracking-widest uppercase ${product.inStock ? 'text-green-500' : 'text-red-500'}`}
+                    >
                       {product.inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </div>
@@ -94,7 +109,7 @@ export function WishlistPageContainer() {
                 <button
                   disabled={!product.inStock}
                   onClick={() => handleMoveToCart(product)}
-                  className="w-full py-3.5 bg-white text-black hover:bg-[#0A0A0A] hover:text-white hover:border-[#FF4D00] border border-white text-[10px] tracking-widest font-black uppercase rounded transition-colors flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center space-x-1.5 rounded border border-white bg-white py-3.5 text-[10px] font-black tracking-widest text-black uppercase transition-colors hover:border-[#FF4D00] hover:bg-[#0A0A0A] hover:text-white disabled:opacity-50"
                 >
                   <ShoppingBag className="h-3.5 w-3.5" />
                   <span>Move to Bag</span>
@@ -103,7 +118,6 @@ export function WishlistPageContainer() {
             ))}
           </div>
         )}
-
       </div>
     </div>
   );

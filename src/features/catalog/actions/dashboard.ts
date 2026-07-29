@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { db } from '@/lib/db';
-import { OrderStatus } from '@prisma/client';
 
 export async function getDashboardStatsAction() {
   try {
@@ -20,7 +18,7 @@ export async function getDashboardStatsAction() {
       recentOrdersRaw,
       productsRaw,
       usersRaw,
-      monthOrdersAll
+      monthOrdersAll,
     ] = await Promise.all([
       db.order.findMany({
         where: {
@@ -84,7 +82,7 @@ export async function getDashboardStatsAction() {
           totalAmount: true,
           createdAt: true,
         },
-      })
+      }),
     ]);
 
     // 1. Total Revenue
@@ -92,8 +90,10 @@ export async function getDashboardStatsAction() {
 
     // 2. Recent Orders mapping
     const recentOrders = recentOrdersRaw.map((o) => {
-      const prof = (o.customer?.customerProfile || {}) as any;
-      const name = prof.firstName ? `${prof.firstName} ${prof.lastName || ''}`.trim() : o.guestEmail || 'Guest User';
+      const prof = (o.customer?.customerProfile || {}) as SafeAny;
+      const name = prof.firstName
+        ? `${prof.firstName} ${prof.lastName || ''}`.trim()
+        : o.guestEmail || 'Guest User';
       return {
         id: o.id,
         orderNumber: o.invoiceRef,
@@ -119,8 +119,10 @@ export async function getDashboardStatsAction() {
 
     // 4. Latest Customers mapping
     const latestCustomers = usersRaw.map((u) => {
-      const prof = (u.customerProfile || {}) as any;
-      const name = prof.firstName ? `${prof.firstName} ${prof.lastName || ''}`.trim() : u.email || 'Anonymous';
+      const prof = (u.customerProfile || {}) as SafeAny;
+      const name = prof.firstName
+        ? `${prof.firstName} ${prof.lastName || ''}`.trim()
+        : u.email || 'Anonymous';
       return {
         id: u.id,
         name,
@@ -164,7 +166,7 @@ export async function getDashboardStatsAction() {
         salesData,
       },
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { message: error.message } };
   }
 }

@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @next/next/no-img-element */
 'use server';
 
 import { db } from '@/lib/db';
 import { ApiResponse } from '@/types/api';
 import { getCurrentUser } from '@/lib/auth-helpers';
 
-export async function getStorefrontProductsAction(): Promise<ApiResponse<any[]>> {
+export async function getStorefrontProductsAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     const list = await db.product.findMany({
       where: {
@@ -40,18 +39,26 @@ export async function getStorefrontProductsAction(): Promise<ApiResponse<any[]>>
 
     const mapped = list.map((p) => {
       const reviewsList = p.reviews || [];
-      const ratingVal = reviewsList.length > 0 ? reviewsList.reduce((acc: number, r: any) => acc + r.rating, 0) / reviewsList.length : 4.8;
-      const primaryImage = p.images[0]?.url || 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600';
+      const ratingVal =
+        reviewsList.length > 0
+          ? reviewsList.reduce((acc: number, r: SafeAny) => acc + r.rating, 0) / reviewsList.length
+          : 4.8;
+      const primaryImage =
+        p.images[0]?.url ||
+        'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600';
       const hoverImage = p.images[1]?.url || primaryImage;
 
       // Price mapping
       const baseVariant = p.variants[0] || {};
       const price = Number(baseVariant.price) || 1500;
-      const compareAtPrice = baseVariant.comparePrice ? Number(baseVariant.comparePrice) : undefined;
+      const compareAtPrice = baseVariant.comparePrice
+        ? Number(baseVariant.comparePrice)
+        : undefined;
       const inStock = (baseVariant.inventoryItem?.quantity || 0) > 0;
 
       // Collections mapping
-      const collectionsSlugs = p.productCollections?.map((pc: any) => pc.collection?.slug) || [];
+      const collectionsSlugs =
+        p.productCollections?.map((pc: SafeAny) => pc.collection?.slug) || [];
       const isFeatured = p.isFeatured || collectionsSlugs.includes('featured');
       const isBestSeller = collectionsSlugs.includes('best-sellers');
       const isTrending = collectionsSlugs.includes('trending');
@@ -88,12 +95,12 @@ export async function getStorefrontProductsAction(): Promise<ApiResponse<any[]>>
       success: true,
       data: JSON.parse(JSON.stringify(mapped)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getStorefrontCategoriesAction(): Promise<ApiResponse<any[]>> {
+export async function getStorefrontCategoriesAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     const list = await db.category.findMany({
       where: { parentId: null }, // Core parent categories
@@ -103,7 +110,8 @@ export async function getStorefrontCategoriesAction(): Promise<ApiResponse<any[]
       id: c.id,
       name: c.name,
       slug: c.slug,
-      image: c.imageUrl || 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400',
+      image:
+        c.imageUrl || 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400',
       href: `/categories/${c.slug}`,
     }));
 
@@ -111,12 +119,12 @@ export async function getStorefrontCategoriesAction(): Promise<ApiResponse<any[]
       success: true,
       data: JSON.parse(JSON.stringify(mapped)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getStorefrontBrandsAction(): Promise<ApiResponse<any[]>> {
+export async function getStorefrontBrandsAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     const list = await db.brand.findMany({
       include: {
@@ -139,12 +147,12 @@ export async function getStorefrontBrandsAction(): Promise<ApiResponse<any[]>> {
       success: true,
       data: JSON.parse(JSON.stringify(mapped)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getStorefrontBlogPostsAction(): Promise<ApiResponse<any[]>> {
+export async function getStorefrontBlogPostsAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     const list = await db.blogPost.findMany({
       where: { status: 'PUBLISHED' },
@@ -157,7 +165,7 @@ export async function getStorefrontBlogPostsAction(): Promise<ApiResponse<any[]>
       success: true,
       data: JSON.parse(JSON.stringify(list)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
@@ -187,7 +195,7 @@ export async function createStorefrontOrderAction(input: {
 }): Promise<ApiResponse<{ id: string; invoiceRef: string }>> {
   try {
     let user = await getCurrentUser();
-    
+
     if (!user && input.guestEmail) {
       const existingUser = await db.user.findUnique({
         where: { email: input.guestEmail },
@@ -210,7 +218,7 @@ export async function createStorefrontOrderAction(input: {
     if (user) {
       const nameFirst = input.shippingAddress?.firstName || '';
       const nameLast = input.shippingAddress?.lastName || '';
-      
+
       await db.customerProfile.upsert({
         where: { userId: user.id },
         update: {
@@ -272,7 +280,7 @@ export async function createStorefrontOrderAction(input: {
             data: {
               quantity: Math.max(0, inv.quantity - item.quantity),
             },
-          })
+          }),
         );
       }
 
@@ -302,7 +310,8 @@ export async function createStorefrontOrderAction(input: {
         discountAmount: input.discountAmount,
         taxAmount: input.taxAmount,
         shippingAmount: input.shippingAmount,
-        totalAmount: input.subtotalAmount - input.discountAmount + input.taxAmount + input.shippingAmount,
+        totalAmount:
+          input.subtotalAmount - input.discountAmount + input.taxAmount + input.shippingAmount,
         couponCode: input.couponCode || null,
         orderItems: {
           create: orderItemsData,
@@ -331,7 +340,45 @@ export async function createStorefrontOrderAction(input: {
       success: true,
       data: { id: order.id, invoiceRef: order.invoiceRef },
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'ORDER_ERROR', message: error.message } };
+  }
+}
+
+export async function getTaxRateAction(country: string, state: string): Promise<number> {
+  try {
+    const match = await db.taxRule.findFirst({
+      where: {
+        country: { equals: country || '', mode: 'insensitive' },
+        OR: [
+          { state: { equals: state || '', mode: 'insensitive' } },
+          { state: null },
+          { state: '' },
+        ],
+      },
+      orderBy: {
+        state: 'desc',
+      },
+    });
+    if (match) {
+      return Number(match.rate);
+    }
+
+    const defaultCountryRates: Record<string, number> = {
+      'united states': 8.0,
+      us: 8.0,
+      india: 18.0,
+      in: 18.0,
+      'united kingdom': 20.0,
+      uk: 20.0,
+      germany: 19.0,
+      canada: 12.0,
+    };
+    const normalizedCountry = (country || '').toLowerCase().trim();
+    return defaultCountryRates[normalizedCountry] !== undefined
+      ? defaultCountryRates[normalizedCountry]
+      : 5.0;
+  } catch {
+    return 5.0;
   }
 }

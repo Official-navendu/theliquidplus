@@ -11,7 +11,7 @@ export class ReviewRepository {
     const { status, search, page = 1, limit = 50 } = params;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: SafeAny = {};
     if (status) {
       where.status = status;
     }

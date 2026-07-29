@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Heart, ShoppingBag, RefreshCw, Share2, Shield, Truck, Award, RotateCcw } from 'lucide-react';
+import { Heart, RefreshCw, Share2, Shield, Truck, Award, RotateCcw } from 'lucide-react';
 import { Product } from '../constants/products';
 
 interface ProductInfoProps {
@@ -36,26 +36,30 @@ export function ProductInfo({ product }: ProductInfoProps) {
   };
 
   return (
-    <div className="space-y-6 text-white text-left">
+    <div className="space-y-6 text-left text-white">
       {/* Brand & Breadcrumbs */}
       <div className="space-y-1">
-        <span className="text-[10px] tracking-[0.25em] text-[#FF4D00] uppercase font-bold">
+        <span className="text-[10px] font-bold tracking-[0.25em] text-[#FF4D00] uppercase">
           {product.brand}
         </span>
-        <h1 className="text-3xl font-light uppercase tracking-wide text-white leading-tight">
+        <h1 className="text-3xl leading-tight font-light tracking-wide text-white uppercase">
           {product.name}
         </h1>
-        <div className="flex justify-between items-center text-[10px] text-[#B5B5B5] uppercase tracking-widest pt-1 border-b border-white/5 pb-3">
+        <div className="flex items-center justify-between border-b border-white/5 pt-1 pb-3 text-[10px] tracking-widest text-[#B5B5B5] uppercase">
           <span>Category: {product.category}</span>
-          <span>SKU: TLP-{product.id}0{selectedSize[0]}</span>
+          <span>
+            SKU: TLP-{product.id}0{selectedSize[0]}
+          </span>
         </div>
       </div>
 
       {/* Ratings & Reviews */}
       <div className="flex items-center space-x-2 text-xs">
-        <div className="flex items-center text-[#FF4D00] space-x-0.5">
+        <div className="flex items-center space-x-0.5 text-[#FF4D00]">
           {[...Array(5)].map((_, i) => (
-            <span key={i} className="text-sm">★</span>
+            <span key={i} className="text-sm">
+              ★
+            </span>
           ))}
         </div>
         <span className="font-semibold text-white">{product.rating}</span>
@@ -63,40 +67,50 @@ export function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       {/* Pricing Section */}
-      <div className="bg-[#0a0a0a] p-4 border border-white/5 rounded-lg space-y-2">
+      <div className="space-y-2 rounded-lg border border-white/5 bg-[#0a0a0a] p-4">
         <div className="flex items-baseline space-x-3">
           <span className="text-2xl font-bold text-[#FF4D00]">
-            {calculatedPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
+            {calculatedPrice.toLocaleString('en-IN', {
+              style: 'currency',
+              currency: 'INR',
+              maximumFractionDigits: 0,
+            })}
           </span>
           {calculatedComparePrice && (
             <>
               <span className="text-sm text-[#B5B5B5] line-through">
-                {calculatedComparePrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
+                {calculatedComparePrice.toLocaleString('en-IN', {
+                  style: 'currency',
+                  currency: 'INR',
+                  maximumFractionDigits: 0,
+                })}
               </span>
-              <span className="text-[10px] font-black uppercase text-[#FF4D00] bg-[#FF4D00]/10 border border-[#FF4D00]/20 px-2 py-0.5 rounded">
+              <span className="rounded border border-[#FF4D00]/20 bg-[#FF4D00]/10 px-2 py-0.5 text-[10px] font-black text-[#FF4D00] uppercase">
                 Save {discountPercent}%
               </span>
             </>
           )}
         </div>
-        <div className="text-[10px] text-[#B5B5B5] flex justify-between">
+        <div className="flex justify-between text-[10px] text-[#B5B5B5]">
           <span>Inclusive of all taxes</span>
-          <span className="text-[#FF4D00] font-semibold">✓ Free Delivery</span>
+          <span className="font-semibold text-[#FF4D00]">✓ Free Delivery</span>
         </div>
       </div>
 
       {/* Size Variants selection */}
       <div className="space-y-3">
-        <h4 className="text-[10px] tracking-[0.2em] text-[#E5E5E5] uppercase font-bold">Select Size</h4>
+        <h4 className="text-[10px] font-bold tracking-[0.2em] text-[#E5E5E5] uppercase">
+          Select Size
+        </h4>
         <div className="flex gap-3">
           {sizes.map((size) => (
             <button
               key={size.label}
               onClick={() => setSelectedSize(size.label)}
-              className={`flex-1 py-3 text-center border text-xs tracking-wider transition-all uppercase cursor-pointer ${
+              className={`flex-1 cursor-pointer border py-3 text-center text-xs tracking-wider uppercase transition-all ${
                 selectedSize === size.label
-                  ? 'border-[#FF4D00] bg-[#FF4D00]/5 text-white font-bold'
-                  : 'border-white/10 hover:border-white/30 text-[#B5B5B5] hover:text-white'
+                  ? 'border-[#FF4D00] bg-[#FF4D00]/5 font-bold text-white'
+                  : 'border-white/10 text-[#B5B5B5] hover:border-white/30 hover:text-white'
               }`}
             >
               {size.label}
@@ -109,19 +123,19 @@ export function ProductInfo({ product }: ProductInfoProps) {
       <div className="space-y-4 pt-2">
         <div className="flex items-center gap-4">
           {/* Quantity Selector */}
-          <div className="flex items-center border border-white/10 h-12 bg-[#0a0a0a]">
+          <div className="flex h-12 items-center border border-white/10 bg-[#0a0a0a]">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="px-4 text-[#B5B5B5] hover:text-white bg-transparent border-0 cursor-pointer"
+              className="cursor-pointer border-0 bg-transparent px-4 text-[#B5B5B5] hover:text-white"
             >
               -
             </button>
-            <span className="px-2 text-xs font-semibold text-white min-w-[20px] text-center">
+            <span className="min-w-[20px] px-2 text-center text-xs font-semibold text-white">
               {quantity}
             </span>
             <button
               onClick={() => setQuantity((q) => q + 1)}
-              className="px-4 text-[#B5B5B5] hover:text-white bg-transparent border-0 cursor-pointer"
+              className="cursor-pointer border-0 bg-transparent px-4 text-[#B5B5B5] hover:text-white"
             >
               +
             </button>
@@ -130,7 +144,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           {/* Add To Cart */}
           <button
             disabled={!product.inStock}
-            className="flex-grow h-12 bg-white text-black hover:bg-[#0A0A0A] hover:text-white hover:border-[#FF4D00] border border-white text-xs tracking-[0.15em] font-black uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer rounded-xl"
+            className="h-12 flex-grow cursor-pointer rounded-xl border border-white bg-white text-xs font-black tracking-[0.15em] text-black uppercase transition-all duration-300 hover:border-[#FF4D00] hover:bg-[#0A0A0A] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {product.inStock ? 'Add To Cart' : 'Out of Stock'}
           </button>
@@ -139,25 +153,25 @@ export function ProductInfo({ product }: ProductInfoProps) {
         {/* Buy Now Button */}
         <button
           disabled={!product.inStock}
-          className="w-full h-12 bg-[#FF4D00] text-white hover:bg-[#E04400] text-xs tracking-[0.15em] font-black uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(255,77,0,0.3)] cursor-pointer rounded-xl"
+          className="h-12 w-full cursor-pointer rounded-xl bg-[#FF4D00] text-xs font-black tracking-[0.15em] text-white uppercase transition-all duration-300 hover:scale-[1.02] hover:bg-[#E04400] hover:shadow-[0_0_15px_rgba(255,77,0,0.3)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Buy It Now
         </button>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-between items-center text-[10px] text-[#B5B5B5] uppercase tracking-widest border-t border-b border-white/5 py-3">
-        <button className="flex items-center space-x-1.5 hover:text-[#FF4D00] transition-colors bg-transparent border-0 cursor-pointer">
+      <div className="flex items-center justify-between border-t border-b border-white/5 py-3 text-[10px] tracking-widest text-[#B5B5B5] uppercase">
+        <button className="flex cursor-pointer items-center space-x-1.5 border-0 bg-transparent transition-colors hover:text-[#FF4D00]">
           <Heart className="h-3.5 w-3.5" />
           <span>Add to Wishlist</span>
         </button>
-        <button className="flex items-center space-x-1.5 hover:text-[#FF4D00] transition-colors bg-transparent border-0 cursor-pointer">
+        <button className="flex cursor-pointer items-center space-x-1.5 border-0 bg-transparent transition-colors hover:text-[#FF4D00]">
           <RefreshCw className="h-3.5 w-3.5" />
           <span>Compare</span>
         </button>
         <button
           onClick={handleShare}
-          className="flex items-center space-x-1.5 hover:text-[#FF4D00] transition-colors bg-transparent border-0 cursor-pointer"
+          className="flex cursor-pointer items-center space-x-1.5 border-0 bg-transparent transition-colors hover:text-[#FF4D00]"
         >
           <Share2 className="h-3.5 w-3.5" />
           <span>Share Product</span>
@@ -166,21 +180,29 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Trust Badges */}
       <div className="grid grid-cols-2 gap-3 pt-2">
-        <div className="flex items-center space-x-2.5 p-3 border border-white/5 bg-[#0a0a0a] rounded-lg">
-          <Shield className="h-4 w-4 text-[#FF4D00] flex-shrink-0" />
-          <span className="text-[10px] text-[#B5B5B5] uppercase font-semibold">100% Genuine Formula</span>
+        <div className="flex items-center space-x-2.5 rounded-lg border border-white/5 bg-[#0a0a0a] p-3">
+          <Shield className="h-4 w-4 flex-shrink-0 text-[#FF4D00]" />
+          <span className="text-[10px] font-semibold text-[#B5B5B5] uppercase">
+            100% Genuine Formula
+          </span>
         </div>
-        <div className="flex items-center space-x-2.5 p-3 border border-white/5 bg-[#0a0a0a] rounded-lg">
-          <Award className="h-4 w-4 text-[#FF4D00] flex-shrink-0" />
-          <span className="text-[10px] text-[#B5B5B5] uppercase font-semibold">Professional Grade</span>
+        <div className="flex items-center space-x-2.5 rounded-lg border border-white/5 bg-[#0a0a0a] p-3">
+          <Award className="h-4 w-4 flex-shrink-0 text-[#FF4D00]" />
+          <span className="text-[10px] font-semibold text-[#B5B5B5] uppercase">
+            Professional Grade
+          </span>
         </div>
-        <div className="flex items-center space-x-2.5 p-3 border border-white/5 bg-[#0a0a0a] rounded-lg">
-          <Truck className="h-4 w-4 text-[#FF4D00] flex-shrink-0" />
-          <span className="text-[10px] text-[#B5B5B5] uppercase font-semibold">Free Express Shipping</span>
+        <div className="flex items-center space-x-2.5 rounded-lg border border-white/5 bg-[#0a0a0a] p-3">
+          <Truck className="h-4 w-4 flex-shrink-0 text-[#FF4D00]" />
+          <span className="text-[10px] font-semibold text-[#B5B5B5] uppercase">
+            Free Express Shipping
+          </span>
         </div>
-        <div className="flex items-center space-x-2.5 p-3 border border-white/5 bg-[#0a0a0a] rounded-lg">
-          <RotateCcw className="h-4 w-4 text-[#FF4D00] flex-shrink-0" />
-          <span className="text-[10px] text-[#B5B5B5] uppercase font-semibold">15-Day Easy Returns</span>
+        <div className="flex items-center space-x-2.5 rounded-lg border border-white/5 bg-[#0a0a0a] p-3">
+          <RotateCcw className="h-4 w-4 flex-shrink-0 text-[#FF4D00]" />
+          <span className="text-[10px] font-semibold text-[#B5B5B5] uppercase">
+            15-Day Easy Returns
+          </span>
         </div>
       </div>
     </div>

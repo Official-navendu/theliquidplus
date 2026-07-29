@@ -14,7 +14,9 @@ export class BrandRepository {
       const setting = await db.storeSetting.findUnique({
         where: { key: `brand_metadata_${b.id}` },
       });
-      const extra = setting ? (setting.value as any) : { description: '', isActive: true, seoTitle: '', seoDescription: '' };
+      const extra = setting
+        ? (setting.value as SafeAny)
+        : { description: '', isActive: true, seoTitle: '', seoDescription: '' };
       parsed.push({
         ...b,
         description: extra.description || '',
@@ -35,7 +37,9 @@ export class BrandRepository {
     const setting = await db.storeSetting.findUnique({
       where: { key: `brand_metadata_${brand.id}` },
     });
-    const extra = setting ? (setting.value as any) : { description: '', isActive: true, seoTitle: '', seoDescription: '' };
+    const extra = setting
+      ? (setting.value as SafeAny)
+      : { description: '', isActive: true, seoTitle: '', seoDescription: '' };
     return {
       ...brand,
       description: extra.description || '',
@@ -90,7 +94,7 @@ export class BrandRepository {
       isActive: boolean;
       seoTitle?: string;
       seoDescription?: string;
-    }
+    },
   ) {
     return db.$transaction(async (tx) => {
       const brand = await tx.brand.update({

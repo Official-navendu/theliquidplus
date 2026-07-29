@@ -19,7 +19,7 @@ export async function getCustomersAction(params: {
   status?: UserStatus;
   page?: number;
   limit?: number;
-}): Promise<ApiResponse<{ items: any[]; total: number }>> {
+}): Promise<ApiResponse<{ items: SafeAny[]; total: number }>> {
   try {
     await assertAdmin();
     const result = await repo.getCustomers(params);
@@ -27,12 +27,12 @@ export async function getCustomersAction(params: {
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getCustomerByIdAction(id: string): Promise<ApiResponse<any>> {
+export async function getCustomerByIdAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertAdmin();
     const result = await repo.getCustomerById(id);
@@ -40,12 +40,15 @@ export async function getCustomerByIdAction(id: string): Promise<ApiResponse<any
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function updateCustomerStatusAction(id: string, status: UserStatus): Promise<ApiResponse<any>> {
+export async function updateCustomerStatusAction(
+  id: string,
+  status: UserStatus,
+): Promise<ApiResponse<SafeAny>> {
   try {
     await assertAdmin();
     const result = await repo.updateCustomerStatus(id, status);
@@ -53,7 +56,7 @@ export async function updateCustomerStatusAction(id: string, status: UserStatus)
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
   }
 }

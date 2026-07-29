@@ -522,6 +522,7 @@ model Product {
   isFeatured  Boolean       @default(false) @map("is_featured")
   isPhysical  Boolean       @default(true) @map("is_physical")
   brandId     String?       @map("brand_id") @db.Uuid
+  homepageCollections String[]      @default([]) @map("homepage_collections")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 

@@ -1,19 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @next/next/no-img-element, react-hooks/exhaustive-deps */
 'use client';
 
 import * as React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { productSchema, ProductInput } from '../schemas/product';
-import { Plus, Trash, Image as ImageIcon, Sparkles, AlertTriangle, Eye, ArrowLeft, ArrowUpRight, HelpCircle } from 'lucide-react';
+import { Plus, Trash, Image as ImageIcon, AlertTriangle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductFormProps {
-  initialData?: any;
-  brands: any[];
-  categories: any[];
-  collections: any[];
-  onSubmit: (data: any) => Promise<void>;
+  initialData?: SafeAny;
+  brands: SafeAny[];
+  categories: SafeAny[];
+  collections: SafeAny[];
+  onSubmit: (data: SafeAny) => Promise<void>;
   isSubmitting?: boolean;
 }
 
@@ -41,6 +41,7 @@ export function ProductForm({
         brandId: '',
         categoryIds: [],
         collectionIds: [],
+        homepageCollections: [],
         images: [],
         variants: [
           {
@@ -73,14 +74,15 @@ export function ProductForm({
       isFeatured: initialData.isFeatured || false,
       isPhysical: initialData.isPhysical !== undefined ? initialData.isPhysical : true,
       brandId: initialData.brandId || '',
-      categoryIds: initialData.productCategories?.map((c: any) => c.categoryId) || [],
-      collectionIds: initialData.productCollections?.map((c: any) => c.collectionId) || [],
-      images: initialData.images?.map((img: any) => ({
-        url: img.url,
-        altText: img.altText || '',
-        sortOrder: img.sortOrder || 0,
-      })) || [],
-      variants: initialData.variants?.map((v: any) => ({
+      categoryIds: initialData.productCategories?.map((c: SafeAny) => c.categoryId) || [],
+      collectionIds: initialData.productCollections?.map((c: SafeAny) => c.collectionId) || [],
+      images:
+        initialData.images?.map((img: SafeAny) => ({
+          url: img.url,
+          altText: img.altText || '',
+          sortOrder: img.sortOrder || 0,
+        })) || [],
+      variants: initialData.variants?.map((v: SafeAny) => ({
         id: v.id,
         sku: v.sku || '',
         barcode: v.barcode || '',
@@ -93,10 +95,11 @@ export function ProductForm({
         height: v.height ? Number(v.height) : null,
         length: v.length ? Number(v.length) : null,
         isActive: v.isActive !== undefined ? v.isActive : true,
-        attributes: v.variantAttributes?.map((va: any) => ({
-          name: va.attributeValue?.attribute?.name || '',
-          value: va.attributeValue?.value || '',
-        })) || [],
+        attributes:
+          v.variantAttributes?.map((va: SafeAny) => ({
+            name: va.attributeValue?.attribute?.name || '',
+            value: va.attributeValue?.value || '',
+          })) || [],
       })) || [
         {
           sku: '',
@@ -117,6 +120,7 @@ export function ProductForm({
       seoDescription: initialData.seo?.metaDescription || '',
       canonicalUrl: initialData.seo?.canonicalUrl || '',
       ogImage: initialData.seo?.ogImage || '',
+      homepageCollections: initialData.homepageCollections || [],
     };
   }, [initialData]);
 
@@ -129,10 +133,14 @@ export function ProductForm({
     formState: { errors },
   } = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
-    defaultValues: defaultValues as any,
+    defaultValues: defaultValues as SafeAny,
   });
 
-  const { fields: variantFields, append: appendVariant, remove: removeVariant } = useFieldArray({
+  const {
+    fields: variantFields,
+    append: appendVariant,
+    remove: removeVariant,
+  } = useFieldArray({
     control,
     name: 'variants',
   });
@@ -165,7 +173,7 @@ export function ProductForm({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
-        
+
         const base64Promise = new Promise<string>((resolve) => {
           reader.onload = () => resolve(reader.result as string);
           reader.readAsDataURL(file);
@@ -208,33 +216,36 @@ export function ProductForm({
     setValue('variants', currentVariants);
   };
 
+  const seoDescriptionVal = watch('seoDescription');
+  const seoTitleVal = watch('seoTitle');
+
   // SEO Score calculator placeholder
   const seoScore = React.useMemo(() => {
     let score = 0;
-    const desc = watch('seoDescription');
-    const title = watch('seoTitle');
+    const desc = seoDescriptionVal;
+    const title = seoTitleVal;
     if (title && title.length > 10) score += 30;
     if (desc && desc.length > 50) score += 40;
     if (watchSlug && watchSlug.length > 3) score += 30;
     return score;
-  }, [watch('seoDescription'), watch('seoTitle'), watchSlug]);
+  }, [seoDescriptionVal, seoTitleVal, watchSlug]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 text-white text-left">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 text-left text-white">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <span className="text-[10px] tracking-[0.35em] text-[#FF4D00] uppercase font-black">
+          <span className="text-[10px] font-black tracking-[0.35em] text-[#FF4D00] uppercase">
             Enterprise Product Catalog
           </span>
-          <h2 className="text-xl sm:text-2xl font-light uppercase tracking-widest text-white mt-1">
+          <h2 className="mt-1 text-xl font-light tracking-widest text-white uppercase sm:text-2xl">
             {initialData ? `Edit: ${initialData.title}` : 'Create New Product Product'}
           </h2>
         </div>
 
-        <div className="flex items-center space-x-3 text-[10px] font-bold uppercase tracking-wider">
+        <div className="flex items-center space-x-3 text-[10px] font-bold tracking-wider uppercase">
           <Link
             href="/admin/products"
-            className="px-4 py-2.5 border border-white/10 hover:border-white rounded-xl transition-all flex items-center space-x-1.5"
+            className="flex items-center space-x-1.5 rounded-xl border border-white/10 px-4 py-2.5 transition-all hover:border-white"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Cancel</span>
@@ -242,7 +253,7 @@ export function ProductForm({
           <button
             type="submit"
             disabled={isSubmitting || uploading}
-            className="px-6 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white rounded-xl transition-all flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer border-0"
+            className="flex cursor-pointer items-center space-x-1.5 rounded-xl border-0 bg-[#FF4D00] px-6 py-2.5 text-white transition-all hover:bg-[#E04400] disabled:opacity-50"
           >
             <span>{isSubmitting ? 'Saving Ledger...' : 'Save Product'}</span>
           </button>
@@ -250,10 +261,9 @@ export function ProductForm({
       </div>
 
       {/* Editor Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-4">
         {/* Navigation tabs column */}
-        <div className="lg:col-span-1 border border-white/5 bg-[#0a0a0a]/80 rounded-2xl p-4 space-y-1">
+        <div className="space-y-1 rounded-2xl border border-white/5 bg-[#0a0a0a]/80 p-4 lg:col-span-1">
           {[
             { id: 'general', label: 'General Information' },
             { id: 'media', label: 'Media & Gallery' },
@@ -266,10 +276,10 @@ export function ProductForm({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl text-[10px] uppercase font-bold tracking-wider transition-all border-0 cursor-pointer ${
+              className={`w-full cursor-pointer rounded-xl border-0 px-4 py-3 text-left text-[10px] font-bold tracking-wider uppercase transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] font-black'
-                  : 'bg-transparent text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'border border-[#FF4D00]/30 bg-[#FF4D00]/10 font-black text-[#FF4D00]'
+                  : 'bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white'
               }`}
             >
               {tab.label}
@@ -278,75 +288,94 @@ export function ProductForm({
 
           {/* Validation errors flag */}
           {Object.keys(errors).length > 0 && (
-            <div className="mt-4 p-3 bg-red-950/20 border border-red-500/30 rounded-xl flex items-center space-x-2 text-[10px] text-red-500 font-bold uppercase">
-              <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
+            <div className="mt-4 flex items-center space-x-2 rounded-xl border border-red-500/30 bg-red-950/20 p-3 text-[10px] font-bold text-red-500 uppercase">
+              <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-500" />
               <span>Fix validations details before saving</span>
             </div>
           )}
         </div>
 
         {/* Editor Form content column */}
-        <div className="lg:col-span-3 border border-white/5 bg-[#0a0a0a]/80 p-6 rounded-2xl space-y-6">
-          
+        <div className="space-y-6 rounded-2xl border border-white/5 bg-[#0a0a0a]/80 p-6 lg:col-span-3">
           {/* 1. GENERAL INFORMATION TAB */}
           {activeTab === 'general' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 General Product Information
               </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Product Name</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Product Name
+                  </label>
                   <input
                     type="text"
                     {...register('title')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="E.g., Ultimate Nano-Shield Ceramic 9H"
                   />
-                  {errors.title && <span className="text-[9px] text-red-500 uppercase font-bold">{errors.title.message}</span>}
+                  {errors.title && (
+                    <span className="text-[9px] font-bold text-red-500 uppercase">
+                      {errors.title.message}
+                    </span>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Slug URL</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Slug URL
+                  </label>
                   <input
                     type="text"
                     {...register('slug')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="ultimate-nano-shield-ceramic-9h"
                   />
-                  {errors.slug && <span className="text-[9px] text-red-500 uppercase font-bold">{errors.slug.message}</span>}
+                  {errors.slug && (
+                    <span className="text-[9px] font-bold text-red-500 uppercase">
+                      {errors.slug.message}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Short Description / Summary</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Short Description / Summary
+                </label>
                 <textarea
                   {...register('description')}
                   rows={4}
-                  className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs resize-none"
+                  className="w-full resize-none rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                   placeholder="Enter a premium description detailing the product science, durability and application rules..."
                 />
-                {errors.description && <span className="text-[9px] text-red-500 uppercase font-bold">{errors.description.message}</span>}
+                {errors.description && (
+                  <span className="text-[9px] font-bold text-red-500 uppercase">
+                    {errors.description.message}
+                  </span>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-                <label className="flex items-center space-x-2.5 p-3.5 bg-black border border-white/10 rounded-xl cursor-pointer select-none">
+              <div className="grid grid-cols-2 gap-4 pt-2 sm:grid-cols-4">
+                <label className="flex cursor-pointer items-center space-x-2.5 rounded-xl border border-white/10 bg-black p-3.5 select-none">
                   <input
                     type="checkbox"
                     {...register('isFeatured')}
-                    className="h-4 w-4 rounded bg-black border-white/10 text-[#FF4D00]"
+                    className="h-4 w-4 rounded border-white/10 bg-black text-[#FF4D00]"
                   />
-                  <span className="text-[10px] uppercase font-bold text-zinc-300">Featured</span>
+                  <span className="text-[10px] font-bold text-zinc-300 uppercase">Featured</span>
                 </label>
 
-                <label className="flex items-center space-x-2.5 p-3.5 bg-black border border-white/10 rounded-xl cursor-pointer select-none">
+                <label className="flex cursor-pointer items-center space-x-2.5 rounded-xl border border-white/10 bg-black p-3.5 select-none">
                   <input
                     type="checkbox"
                     {...register('isPhysical')}
-                    className="h-4 w-4 rounded bg-black border-white/10 text-[#FF4D00]"
+                    className="h-4 w-4 rounded border-white/10 bg-black text-[#FF4D00]"
                   />
-                  <span className="text-[10px] uppercase font-bold text-zinc-300">Physical product</span>
+                  <span className="text-[10px] font-bold text-zinc-300 uppercase">
+                    Physical product
+                  </span>
                 </label>
               </div>
             </div>
@@ -355,20 +384,24 @@ export function ProductForm({
           {/* 2. MEDIA & GALLERY TAB */}
           {activeTab === 'media' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 Media & Gallery Images
               </h3>
 
               {/* Upload Dropzone */}
-              <div className="border border-dashed border-white/10 bg-black/40 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4">
-                <div className="p-3 bg-[#FF4D00]/10 border border-[#FF4D00]/20 rounded-xl text-[#FF4D00]">
+              <div className="flex flex-col items-center justify-center space-y-4 rounded-2xl border border-dashed border-white/10 bg-black/40 p-8 text-center">
+                <div className="rounded-xl border border-[#FF4D00]/20 bg-[#FF4D00]/10 p-3 text-[#FF4D00]">
                   <ImageIcon className="h-6 w-6" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold block text-white">Drag and drop images, or browse files</span>
-                  <span className="text-[10px] text-zinc-500 block mt-1 uppercase tracking-wider font-semibold">Supports JPG, PNG, WEBP (up to 5MB)</span>
+                  <span className="block text-xs font-bold text-white">
+                    Drag and drop images, or browse files
+                  </span>
+                  <span className="mt-1 block text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
+                    Supports JPG, PNG, WEBP (up to 5MB)
+                  </span>
                 </div>
-                <label className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] uppercase font-black tracking-wider rounded-xl transition-all cursor-pointer select-none">
+                <label className="cursor-pointer rounded-xl bg-[#FF4D00] px-5 py-2.5 text-[10px] font-black tracking-wider text-white uppercase transition-all select-none hover:bg-[#E04400]">
                   <span>Browse Images</span>
                   <input
                     type="file"
@@ -382,24 +415,33 @@ export function ProductForm({
 
               {/* Gallery Grid */}
               {watchImages.length === 0 ? (
-                <div className="py-8 text-center border border-white/5 bg-black/20 rounded-xl text-[10px] uppercase tracking-wider font-bold text-zinc-500">
+                <div className="rounded-xl border border-white/5 bg-black/20 py-8 text-center text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
                   No images uploaded yet.
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   {watchImages.map((img, idx) => (
-                    <div key={idx} className="group border border-white/10 bg-black rounded-xl p-2 relative overflow-hidden space-y-2">
-                      <div className="h-32 w-full relative bg-[#111] rounded-lg overflow-hidden flex items-center justify-center">
-                        <img src={img.url} alt={img.altText || ''} className="h-full w-full object-contain" />
+                    <div
+                      key={idx}
+                      className="group relative space-y-2 overflow-hidden rounded-xl border border-white/10 bg-black p-2"
+                    >
+                      <div className="relative flex h-32 w-full items-center justify-center overflow-hidden rounded-lg bg-[#111]">
+                        <Image
+                          src={img.url}
+                          alt={img.altText || ''}
+                          fill
+                          className="object-contain"
+                          unoptimized={img.url?.startsWith('data:')}
+                        />
                         <button
                           type="button"
                           onClick={() => removeImage(idx)}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white h-7 w-7 rounded-lg flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 border-0 cursor-pointer"
+                          className="absolute top-2 right-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border-0 bg-red-600 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-red-700"
                         >
                           <Trash className="h-4 w-4" />
                         </button>
                         {idx === 0 && (
-                          <span className="absolute bottom-2 left-2 bg-[#FF4D00] text-white text-[7px] font-black uppercase tracking-wider px-2 py-0.5 rounded">
+                          <span className="absolute bottom-2 left-2 rounded bg-[#FF4D00] px-2 py-0.5 text-[7px] font-black tracking-wider text-white uppercase">
                             Primary
                           </span>
                         )}
@@ -413,7 +455,7 @@ export function ProductForm({
                           next[idx].altText = e.target.value;
                           setValue('images', next);
                         }}
-                        className="w-full bg-black border border-white/10 text-white px-2 py-1.5 rounded-lg outline-none focus:border-[#FF4D00] text-[10px]"
+                        className="w-full rounded-lg border border-white/10 bg-black px-2 py-1.5 text-[10px] text-white outline-none focus:border-[#FF4D00]"
                       />
                     </div>
                   ))}
@@ -425,13 +467,15 @@ export function ProductForm({
           {/* 3. PRICING TAB */}
           {activeTab === 'pricing' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 Pricing Details
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Base Price (USD)</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Base Price (USD)
+                  </label>
                   <input
                     type="number"
                     step="0.01"
@@ -444,13 +488,15 @@ export function ProductForm({
                         setValue('variants', next);
                       }
                     }}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="0.00"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Compare-At Price (USD)</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Compare-At Price (USD)
+                  </label>
                   <input
                     type="number"
                     step="0.01"
@@ -463,15 +509,17 @@ export function ProductForm({
                         setValue('variants', next);
                       }
                     }}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="0.00"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Cost Price (USD)</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Cost Price (USD)
+                  </label>
                   <input
                     type="number"
                     step="0.01"
@@ -484,20 +532,26 @@ export function ProductForm({
                         setValue('variants', next);
                       }
                     }}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="0.00"
                   />
                 </div>
 
                 {/* Discount Preview */}
-                {watchVariants[0]?.comparePrice && watchVariants[0]?.price < watchVariants[0]?.comparePrice && (
-                  <div className="p-4 bg-green-950/20 border border-green-500/20 rounded-xl flex items-center justify-between text-xs text-green-500 font-bold uppercase">
-                    <span>Discount Margin:</span>
-                    <span>
-                      {Math.round(((watchVariants[0].comparePrice - watchVariants[0].price) / watchVariants[0].comparePrice) * 100)}% Off
-                    </span>
-                  </div>
-                )}
+                {watchVariants[0]?.comparePrice &&
+                  watchVariants[0]?.price < watchVariants[0]?.comparePrice && (
+                    <div className="flex items-center justify-between rounded-xl border border-green-500/20 bg-green-950/20 p-4 text-xs font-bold text-green-500 uppercase">
+                      <span>Discount Margin:</span>
+                      <span>
+                        {Math.round(
+                          ((watchVariants[0].comparePrice - watchVariants[0].price) /
+                            watchVariants[0].comparePrice) *
+                            100,
+                        )}
+                        % Off
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
           )}
@@ -505,82 +559,100 @@ export function ProductForm({
           {/* 4. INVENTORY & VARIANTS TAB */}
           {activeTab === 'inventory' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 Inventory & SKU Products
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Default SKU</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Default SKU
+                  </label>
                   <input
                     type="text"
                     {...register('variants.0.sku')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="LP-SHIELD-500"
                   />
-                  {errors.variants?.[0]?.sku && <span className="text-[9px] text-red-500 uppercase font-bold">{errors.variants[0].sku.message}</span>}
+                  {errors.variants?.[0]?.sku && (
+                    <span className="text-[9px] font-bold text-red-500 uppercase">
+                      {errors.variants[0].sku.message}
+                    </span>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Barcode (UPC/EAN)</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Barcode (UPC/EAN)
+                  </label>
                   <input
                     type="text"
                     {...register('variants.0.barcode')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="8901234567890"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Stock Quantity</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Stock Quantity
+                  </label>
                   <input
                     type="number"
                     {...register('variants.0.quantity', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="0"
                   />
                 </div>
               </div>
 
               {watchIsPhysical && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Weight (kg)</label>
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                      Weight (kg)
+                    </label>
                     <input
                       type="number"
                       step="0.01"
                       {...register('variants.0.weight', { valueAsNumber: true })}
-                      className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none text-xs"
+                      className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                       placeholder="0.00"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Width (cm)</label>
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                      Width (cm)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
                       {...register('variants.0.width', { valueAsNumber: true })}
-                      className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none text-xs"
+                      className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                       placeholder="0.0"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Height (cm)</label>
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                      Height (cm)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
                       {...register('variants.0.height', { valueAsNumber: true })}
-                      className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none text-xs"
+                      className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                       placeholder="0.0"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Length (cm)</label>
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                      Length (cm)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
                       {...register('variants.0.length', { valueAsNumber: true })}
-                      className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none text-xs"
+                      className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                       placeholder="0.0"
                     />
                   </div>
@@ -588,9 +660,11 @@ export function ProductForm({
               )}
 
               {/* Sub-section: Unlimited Custom Variants */}
-              <div className="space-y-4 pt-4 border-t border-white/5">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-400 font-black">Variants Matrix</h4>
+              <div className="space-y-4 border-t border-white/5 pt-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[10px] font-black tracking-wider text-zinc-400 uppercase">
+                    Variants Matrix
+                  </h4>
                   <button
                     type="button"
                     onClick={() =>
@@ -609,7 +683,7 @@ export function ProductForm({
                         attributes: [],
                       })
                     }
-                    className="px-3.5 py-2 bg-zinc-900 border border-white/10 hover:border-white text-white text-[10px] uppercase tracking-wider font-bold rounded-xl flex items-center space-x-1 transition-all cursor-pointer"
+                    className="flex cursor-pointer items-center space-x-1 rounded-xl border border-white/10 bg-zinc-900 px-3.5 py-2 text-[10px] font-bold tracking-wider text-white uppercase transition-all hover:border-white"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add Variant</span>
@@ -623,72 +697,89 @@ export function ProductForm({
                       return (
                         <div
                           key={field.id}
-                          className="p-4 border border-white/10 bg-black/60 rounded-2xl relative space-y-4 text-left"
+                          className="relative space-y-4 rounded-2xl border border-white/10 bg-black/60 p-4 text-left"
                         >
-                          <div className="flex justify-between items-center">
-                            <span className="text-[9px] uppercase tracking-widest text-[#FF4D00] font-black">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-black tracking-widest text-[#FF4D00] uppercase">
                               Variant #{realIndex}
                             </span>
                             <button
                               type="button"
                               onClick={() => removeVariant(realIndex)}
-                              className="text-red-500 hover:text-red-400 text-[10px] uppercase font-bold tracking-wider flex items-center space-x-1 cursor-pointer bg-transparent border-0"
+                              className="flex cursor-pointer items-center space-x-1 border-0 bg-transparent text-[10px] font-bold tracking-wider text-red-500 uppercase hover:text-red-400"
                             >
                               <Trash className="h-3.5 w-3.5" />
                               <span>Remove</span>
                             </button>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
                             <div className="space-y-1">
-                              <label className="text-[9px] text-zinc-500 uppercase font-bold">SKU</label>
+                              <label className="text-[9px] font-bold text-zinc-500 uppercase">
+                                SKU
+                              </label>
                               <input
                                 type="text"
                                 {...register(`variants.${realIndex}.sku`)}
-                                className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg text-xs"
+                                className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white"
                               />
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[9px] text-zinc-500 uppercase font-bold">Price (USD)</label>
+                              <label className="text-[9px] font-bold text-zinc-500 uppercase">
+                                Price (USD)
+                              </label>
                               <input
                                 type="number"
-                                {...register(`variants.${realIndex}.price`, { valueAsNumber: true })}
-                                className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg text-xs"
+                                {...register(`variants.${realIndex}.price`, {
+                                  valueAsNumber: true,
+                                })}
+                                className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white"
                               />
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[9px] text-zinc-500 uppercase font-bold">Stock</label>
+                              <label className="text-[9px] font-bold text-zinc-500 uppercase">
+                                Stock
+                              </label>
                               <input
                                 type="number"
-                                {...register(`variants.${realIndex}.quantity`, { valueAsNumber: true })}
-                                className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg text-xs"
+                                {...register(`variants.${realIndex}.quantity`, {
+                                  valueAsNumber: true,
+                                })}
+                                className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white"
                               />
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[9px] text-zinc-500 uppercase font-bold">Barcode</label>
+                              <label className="text-[9px] font-bold text-zinc-500 uppercase">
+                                Barcode
+                              </label>
                               <input
                                 type="text"
                                 {...register(`variants.${realIndex}.barcode`)}
-                                className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg text-xs"
+                                className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white"
                               />
                             </div>
                           </div>
 
                           {/* Attributes on Variant (Size/Color/Finish) */}
                           <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                              <span className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold">Variant Options</span>
+                            <div className="flex items-center justify-between">
+                              <span className="text-[8px] font-bold tracking-widest text-zinc-500 uppercase">
+                                Variant Options
+                              </span>
                               <button
                                 type="button"
                                 onClick={() => addVariantAttribute(realIndex)}
-                                className="text-[8px] uppercase tracking-wider text-[#FF4D00] font-bold hover:underline cursor-pointer bg-transparent border-0"
+                                className="cursor-pointer border-0 bg-transparent text-[8px] font-bold tracking-wider text-[#FF4D00] uppercase hover:underline"
                               >
                                 + Add Option
                               </button>
                             </div>
 
                             {watchVariants[realIndex]?.attributes?.map((attr, aIdx) => (
-                              <div key={aIdx} className="flex items-center space-x-3 bg-zinc-900/50 p-2.5 rounded-xl border border-white/5">
+                              <div
+                                key={aIdx}
+                                className="flex items-center space-x-3 rounded-xl border border-white/5 bg-zinc-900/50 p-2.5"
+                              >
                                 <select
                                   value={attr.name}
                                   onChange={(e) => {
@@ -696,7 +787,7 @@ export function ProductForm({
                                     next[realIndex].attributes![aIdx].name = e.target.value;
                                     setValue('variants', next);
                                   }}
-                                  className="bg-black border border-white/10 text-white px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold tracking-wider outline-none"
+                                  className="rounded-lg border border-white/10 bg-black px-3 py-1.5 text-[10px] font-bold tracking-wider text-white uppercase outline-none"
                                 >
                                   <option value="Size">Size</option>
                                   <option value="Color">Color</option>
@@ -713,12 +804,12 @@ export function ProductForm({
                                     next[realIndex].attributes![aIdx].value = e.target.value;
                                     setValue('variants', next);
                                   }}
-                                  className="flex-grow bg-black border border-white/10 text-white px-3 py-1.5 rounded-lg text-xs"
+                                  className="flex-grow rounded-lg border border-white/10 bg-black px-3 py-1.5 text-xs text-white"
                                 />
                                 <button
                                   type="button"
                                   onClick={() => removeVariantAttribute(realIndex, aIdx)}
-                                  className="text-red-500 hover:text-red-400 p-1.5 bg-transparent border-0 cursor-pointer"
+                                  className="cursor-pointer border-0 bg-transparent p-1.5 text-red-500 hover:text-red-400"
                                 >
                                   <Trash className="h-3.5 w-3.5" />
                                 </button>
@@ -730,7 +821,7 @@ export function ProductForm({
                     })}
                   </div>
                 ) : (
-                  <div className="py-6 text-center border border-dashed border-white/5 bg-black/10 rounded-xl text-[9px] uppercase tracking-wider font-bold text-zinc-500">
+                  <div className="rounded-xl border border-dashed border-white/5 bg-black/10 py-6 text-center text-[9px] font-bold tracking-wider text-zinc-500 uppercase">
                     Base SKU configured. Click &quot;Add Variant&quot; to build dimensions.
                   </div>
                 )}
@@ -741,20 +832,19 @@ export function ProductForm({
           {/* 5. CATEGORIES & BRAND TAB */}
           {activeTab === 'metadata' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 Metadata, Brand & Category Links
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {/* Brand Selection */}
                 <div className="space-y-3">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold block">
+                  <label className="block text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                     Product Brand
                   </label>
                   <select
                     {...register('brandId')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs cursor-pointer"
+                    className="w-full cursor-pointer rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                   >
                     <option value="">No Brand Linked</option>
                     {brands.map((b) => (
@@ -767,15 +857,18 @@ export function ProductForm({
 
                 {/* Collections Selection */}
                 <div className="space-y-3">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold block">
+                  <label className="block text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                     Linked Collections
                   </label>
-                  <div className="grid grid-cols-1 gap-2 p-3 bg-black border border-white/10 rounded-xl h-44 overflow-y-auto">
+                  <div className="grid h-44 grid-cols-1 gap-2 overflow-y-auto rounded-xl border border-white/10 bg-black p-3">
                     {collections.map((col) => {
                       const watchColIds = watch('collectionIds') || [];
                       const isChecked = watchColIds.includes(col.id);
                       return (
-                        <label key={col.id} className="flex items-center space-x-2.5 cursor-pointer text-xs select-none">
+                        <label
+                          key={col.id}
+                          className="flex cursor-pointer items-center space-x-2.5 text-xs select-none"
+                        >
                           <input
                             type="checkbox"
                             checked={isChecked}
@@ -785,9 +878,11 @@ export function ProductForm({
                                 : [...watchColIds, col.id];
                               setValue('collectionIds', next);
                             }}
-                            className="h-4 w-4 rounded bg-black border-white/10 text-[#FF4D00] focus:ring-0 cursor-pointer"
+                            className="h-4 w-4 cursor-pointer rounded border-white/10 bg-black text-[#FF4D00] focus:ring-0"
                           />
-                          <span className={isChecked ? 'text-[#FF4D00] font-bold' : 'text-zinc-300'}>
+                          <span
+                            className={isChecked ? 'font-bold text-[#FF4D00]' : 'text-zinc-300'}
+                          >
                             {col.name}
                           </span>
                         </label>
@@ -797,17 +892,54 @@ export function ProductForm({
                 </div>
               </div>
 
+              {/* Homepage Collection Selection */}
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Homepage Collection
+                </label>
+                <div className="flex flex-wrap gap-6 rounded-xl border border-white/10 bg-black p-4">
+                  {['Curated', 'Trending Now', 'Essentials'].map((colOption) => {
+                    const watchHomepageCols = watch('homepageCollections') || [];
+                    const isChecked = watchHomepageCols.includes(colOption);
+                    return (
+                      <label
+                        key={colOption}
+                        className="flex cursor-pointer items-center space-x-2.5 text-xs select-none"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            const next = isChecked
+                              ? watchHomepageCols.filter((val) => val !== colOption)
+                              : [...watchHomepageCols, colOption];
+                            setValue('homepageCollections', next);
+                          }}
+                          className="h-4 w-4 cursor-pointer rounded border-white/10 bg-black text-[#FF4D00] focus:ring-0"
+                        />
+                        <span className={isChecked ? 'font-bold text-[#FF4D00]' : 'text-zinc-300'}>
+                          {colOption}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Categories Tree Multi-Select */}
               <div className="space-y-3">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold block">
+                <label className="block text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                   Product Categories
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-black border border-white/10 rounded-xl max-h-60 overflow-y-auto">
+                <div className="grid max-h-60 grid-cols-1 gap-3 overflow-y-auto rounded-xl border border-white/10 bg-black p-4 sm:grid-cols-2 md:grid-cols-3">
                   {categories.map((cat) => {
                     const watchCatIds = watch('categoryIds') || [];
                     const isChecked = watchCatIds.includes(cat.id);
                     return (
-                      <label key={cat.id} className="flex items-center space-x-2.5 cursor-pointer text-xs select-none p-2 bg-zinc-950 rounded-lg border border-white/5 hover:border-white/10">
+                      <label
+                        key={cat.id}
+                        className="flex cursor-pointer items-center space-x-2.5 rounded-lg border border-white/5 bg-zinc-950 p-2 text-xs select-none hover:border-white/10"
+                      >
                         <input
                           type="checkbox"
                           checked={isChecked}
@@ -817,9 +949,9 @@ export function ProductForm({
                               : [...watchCatIds, cat.id];
                             setValue('categoryIds', next);
                           }}
-                          className="h-4 w-4 rounded bg-black border-white/10 text-[#FF4D00] focus:ring-0 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer rounded border-white/10 bg-black text-[#FF4D00] focus:ring-0"
                         />
-                        <span className={isChecked ? 'text-[#FF4D00] font-bold' : 'text-zinc-300'}>
+                        <span className={isChecked ? 'font-bold text-[#FF4D00]' : 'text-zinc-300'}>
                           {cat.name}
                         </span>
                       </label>
@@ -833,50 +965,58 @@ export function ProductForm({
           {/* 6. SEO & VISIBILITY TAB */}
           {activeTab === 'seo' && (
             <div className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00] border-b border-white/5 pb-2">
+              <h3 className="border-b border-white/5 pb-2 text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 SEO Optimizer & Publishing
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">SEO Title</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    SEO Title
+                  </label>
                   <input
                     type="text"
                     {...register('seoTitle')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="Best Ceramic Coating | The Liquid Plus"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Canonical Link URL</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Canonical Link URL
+                  </label>
                   <input
                     type="text"
                     {...register('canonicalUrl')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="https://theliquidplus.com/shop/product/coating"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Meta Description</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Meta Description
+                </label>
                 <textarea
                   {...register('seoDescription')}
                   rows={3}
-                  className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs resize-none"
+                  className="w-full resize-none rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                   placeholder="Enter a search engine optimized snippet describing this product..."
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* SEO Score Visual placeholder */}
-                <div className="p-4 bg-zinc-950 rounded-xl border border-white/5 space-y-2 flex flex-col justify-center">
-                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                <div className="flex flex-col justify-center space-y-2 rounded-xl border border-white/5 bg-zinc-950 p-4">
+                  <div className="flex items-center justify-between text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                     <span>SEO Assessment Score</span>
-                    <span className={seoScore >= 70 ? 'text-green-500' : 'text-amber-500'}>{seoScore}/100</span>
+                    <span className={seoScore >= 70 ? 'text-green-500' : 'text-amber-500'}>
+                      {seoScore}/100
+                    </span>
                   </div>
-                  <div className="w-full bg-zinc-900 h-2 rounded-full overflow-hidden">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-900">
                     <div
                       className={`h-full transition-all duration-500 ${seoScore >= 70 ? 'bg-green-500' : 'bg-amber-500'}`}
                       style={{ width: `${seoScore}%` }}
@@ -886,12 +1026,12 @@ export function ProductForm({
 
                 {/* Status Options */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold block">
+                  <label className="block text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                     Visibility Status
                   </label>
                   <select
                     {...register('status')}
-                    className="w-full bg-black border border-white/10 text-white px-4 py-2.5 rounded-xl outline-none focus:border-[#FF4D00] text-xs cursor-pointer"
+                    className="w-full cursor-pointer rounded-xl border border-white/10 bg-black px-4 py-2.5 text-xs text-white outline-none focus:border-[#FF4D00]"
                   >
                     <option value="DRAFT">Draft</option>
                     <option value="REVIEW">In Review</option>
@@ -902,7 +1042,6 @@ export function ProductForm({
               </div>
             </div>
           )}
-
         </div>
       </div>
     </form>

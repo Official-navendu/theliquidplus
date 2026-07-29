@@ -2,11 +2,16 @@ import { db } from '@/lib/db';
 import { UserType, UserStatus } from '@prisma/client';
 
 export class CustomerAdminRepository {
-  async getCustomers(params: { search?: string; status?: UserStatus; page?: number; limit?: number }) {
+  async getCustomers(params: {
+    search?: string;
+    status?: UserStatus;
+    page?: number;
+    limit?: number;
+  }) {
     const { search, status, page = 1, limit = 50 } = params;
     const skip = (page - 1) * limit;
 
-    const where: any = {
+    const where: SafeAny = {
       type: UserType.CUSTOMER,
     };
 
@@ -66,7 +71,7 @@ export class CustomerAdminRepository {
           ...user,
           couponUsages: Array(count).fill({}),
         };
-      })
+      }),
     );
 
     return { items: itemsWithCoupons, total };

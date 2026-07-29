@@ -5,10 +5,10 @@ import { CheckoutPageContainer } from '@/features/catalog/components/CheckoutPag
 
 export default function CheckoutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-black">
+    <div className="flex min-h-screen flex-col bg-zinc-50">
       <AnnouncementBar />
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow bg-zinc-50">
         <CheckoutPageContainer />
       </main>
       <Footer />

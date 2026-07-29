@@ -11,7 +11,7 @@ export class OrderRepository {
     const { search, status, page = 1, limit = 50 } = params;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: SafeAny = {};
     if (status) {
       where.status = status;
     }
@@ -103,7 +103,7 @@ export class OrderRepository {
                 data: {
                   quantity: inv.quantity + item.quantity,
                 },
-              })
+              }),
             );
           }
         }

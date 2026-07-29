@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product } from '../constants/products';
@@ -20,14 +22,14 @@ interface CartStore {
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
-  
+
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: string) => void;
-  
+
   addToCompare: (product: Product) => void;
   removeFromCompare: (productId: string) => void;
   clearCompare: () => void;
-  
+
   applyCoupon: (code: string) => boolean;
   removeCoupon: () => void;
 }
@@ -50,7 +52,7 @@ export const useCartStore = create<CartStore>()(
         if (existing) {
           set({
             cart: cart.map((item) =>
-              item.id === itemId ? { ...item, quantity: item.quantity + qty } : item
+              item.id === itemId ? { ...item, quantity: item.quantity + qty } : item,
             ),
           });
         } else {
@@ -69,7 +71,7 @@ export const useCartStore = create<CartStore>()(
       updateQuantity: (itemId, quantity) => {
         set({
           cart: get().cart.map((item) =>
-            item.id === itemId ? { ...item, quantity: Math.max(1, quantity) } : item
+            item.id === itemId ? { ...item, quantity: Math.max(1, quantity) } : item,
           ),
         });
       },
@@ -121,7 +123,7 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'liquidplus-cart-storage',
-    }
-  )
+    },
+  ),
 );
 export default useCartStore;

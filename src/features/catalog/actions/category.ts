@@ -29,27 +29,27 @@ async function assertManager() {
   if (!allowed.includes(user.role)) throw new Error('Insufficient permissions');
 }
 
-export async function getCategoriesAction(): Promise<ApiResponse<any[]>> {
+export async function getCategoriesAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     await assertManager();
     const list = await repo.getCategories();
     return { success: true, data: JSON.parse(JSON.stringify(list)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getCategoryByIdAction(id: string): Promise<ApiResponse<any>> {
+export async function getCategoryByIdAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const item = await repo.getCategoryById(id);
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function createCategoryAction(input: any): Promise<ApiResponse<any>> {
+export async function createCategoryAction(input: SafeAny): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const validated = categorySchema.parse(input);
@@ -57,12 +57,15 @@ export async function createCategoryAction(input: any): Promise<ApiResponse<any>
     revalidatePath('/');
     revalidatePath('/shop');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'CREATE_ERROR', message: error.message } };
   }
 }
 
-export async function updateCategoryAction(id: string, input: any): Promise<ApiResponse<any>> {
+export async function updateCategoryAction(
+  id: string,
+  input: SafeAny,
+): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const validated = categorySchema.parse(input);
@@ -71,19 +74,19 @@ export async function updateCategoryAction(id: string, input: any): Promise<ApiR
     revalidatePath('/shop');
     revalidatePath('/categories/[slug]', 'page');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
   }
 }
 
-export async function deleteCategoryAction(id: string): Promise<ApiResponse<any>> {
+export async function deleteCategoryAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const item = await repo.deleteCategory(id);
     revalidatePath('/');
     revalidatePath('/shop');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'DELETE_ERROR', message: error.message } };
   }
 }

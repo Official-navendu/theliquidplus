@@ -4,7 +4,6 @@ import { getCurrentUser } from '@/lib/auth-helpers';
 import { ProductRepository } from '../repositories/product.repository';
 import { productSchema, ProductInput } from '../schemas/product';
 import { ApiResponse } from '@/types/api';
-import { handleAppError } from '@/core/error/handler';
 import { db } from '@/lib/db';
 import { ProductStatus, UserType } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
@@ -45,11 +44,11 @@ export async function getProductsAction(params: {
   sortBy?: string;
   page?: number;
   limit?: number;
-}): Promise<ApiResponse<{ items: any[]; total: number }>> {
+}): Promise<ApiResponse<{ items: SafeAny[]; total: number }>> {
   try {
     await assertProductManager();
     const result = await repo.getProducts(params);
-    
+
     // Convert decimals/dates to plain JSON objects
     const items = JSON.parse(JSON.stringify(result.items));
     return {
@@ -59,7 +58,7 @@ export async function getProductsAction(params: {
         total: result.total,
       },
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -73,7 +72,7 @@ export async function getProductsAction(params: {
 /**
  * Server Action: Fetch single product details
  */
-export async function getProductByIdAction(id: string): Promise<ApiResponse<any>> {
+export async function getProductByIdAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const result = await repo.getProductById(id);
@@ -91,7 +90,7 @@ export async function getProductByIdAction(id: string): Promise<ApiResponse<any>
       success: true,
       data,
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -105,7 +104,7 @@ export async function getProductByIdAction(id: string): Promise<ApiResponse<any>
 /**
  * Server Action: Create new product
  */
-export async function createProductAction(input: ProductInput): Promise<ApiResponse<any>> {
+export async function createProductAction(input: ProductInput): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const validated = productSchema.parse(input);
@@ -115,7 +114,7 @@ export async function createProductAction(input: ProductInput): Promise<ApiRespo
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -129,7 +128,10 @@ export async function createProductAction(input: ProductInput): Promise<ApiRespo
 /**
  * Server Action: Update product
  */
-export async function updateProductAction(id: string, input: ProductInput): Promise<ApiResponse<any>> {
+export async function updateProductAction(
+  id: string,
+  input: ProductInput,
+): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const validated = productSchema.parse(input);
@@ -139,7 +141,7 @@ export async function updateProductAction(id: string, input: ProductInput): Prom
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -153,7 +155,7 @@ export async function updateProductAction(id: string, input: ProductInput): Prom
 /**
  * Server Action: Delete/Archive product
  */
-export async function deleteProductAction(id: string, soft = true): Promise<ApiResponse<any>> {
+export async function deleteProductAction(id: string, soft = true): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const result = await repo.deleteProduct(id, soft);
@@ -162,7 +164,7 @@ export async function deleteProductAction(id: string, soft = true): Promise<ApiR
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -176,7 +178,7 @@ export async function deleteProductAction(id: string, soft = true): Promise<ApiR
 /**
  * Server Action: Restore product
  */
-export async function restoreProductAction(id: string): Promise<ApiResponse<any>> {
+export async function restoreProductAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const result = await repo.restoreProduct(id);
@@ -185,7 +187,7 @@ export async function restoreProductAction(id: string): Promise<ApiResponse<any>
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -199,7 +201,7 @@ export async function restoreProductAction(id: string): Promise<ApiResponse<any>
 /**
  * Server Action: Bulk Delete
  */
-export async function bulkDeleteProductsAction(ids: string[]): Promise<ApiResponse<any>> {
+export async function bulkDeleteProductsAction(ids: string[]): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const result = await repo.bulkDelete(ids);
@@ -207,7 +209,7 @@ export async function bulkDeleteProductsAction(ids: string[]): Promise<ApiRespon
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -221,7 +223,10 @@ export async function bulkDeleteProductsAction(ids: string[]): Promise<ApiRespon
 /**
  * Server Action: Bulk Status Update
  */
-export async function bulkUpdateStatusAction(ids: string[], status: ProductStatus): Promise<ApiResponse<any>> {
+export async function bulkUpdateStatusAction(
+  ids: string[],
+  status: ProductStatus,
+): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const result = await repo.bulkUpdateStatus(ids, status);
@@ -229,7 +234,7 @@ export async function bulkUpdateStatusAction(ids: string[], status: ProductStatu
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -243,11 +248,13 @@ export async function bulkUpdateStatusAction(ids: string[], status: ProductStatu
 /**
  * Helper to fetch lists of all categories, brands, collections
  */
-export async function getBrandsAndCategoriesAction(): Promise<ApiResponse<{
-  brands: any[];
-  categories: any[];
-  collections: any[];
-}>> {
+export async function getBrandsAndCategoriesAction(): Promise<
+  ApiResponse<{
+    brands: SafeAny[];
+    categories: SafeAny[];
+    collections: SafeAny[];
+  }>
+> {
   try {
     await assertProductManager();
     const [brands, categories, collections] = await Promise.all([
@@ -264,7 +271,7 @@ export async function getBrandsAndCategoriesAction(): Promise<ApiResponse<{
         collections: JSON.parse(JSON.stringify(collections)),
       },
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -278,7 +285,7 @@ export async function getBrandsAndCategoriesAction(): Promise<ApiResponse<{
 /**
  * Server Action: Duplicate Product
  */
-export async function duplicateProductAction(id: string): Promise<ApiResponse<any>> {
+export async function duplicateProductAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertProductManager();
     const existing = await repo.getProductById(id);
@@ -300,30 +307,34 @@ export async function duplicateProductAction(id: string): Promise<ApiResponse<an
       isFeatured: existing.isFeatured,
       isPhysical: existing.isPhysical,
       brandId: existing.brandId,
-      categoryIds: existing.productCategories?.map((c: any) => c.categoryId) || [],
-      collectionIds: existing.productCollections?.map((c: any) => c.collectionId) || [],
-      images: existing.images?.map((img: any) => ({
-        url: img.url,
-        altText: img.altText,
-        sortOrder: img.sortOrder,
-      })) || [],
-      variants: existing.variants?.map((v: any) => ({
-        sku: `${v.sku}-COPY-${Math.floor(Math.random() * 1000)}`,
-        barcode: v.barcode ? `${v.barcode}-COPY` : null,
-        price: Number(v.price) || 0,
-        comparePrice: v.comparePrice ? Number(v.comparePrice) : null,
-        costPrice: v.costPrice ? Number(v.costPrice) : null,
-        quantity: v.inventoryItem?.quantity || 0,
-        weight: v.weight ? Number(v.weight) : null,
-        width: v.width ? Number(v.width) : null,
-        height: v.height ? Number(v.height) : null,
-        length: v.length ? Number(v.length) : null,
-        isActive: v.isActive,
-        attributes: v.variantAttributes?.map((va: any) => ({
-          name: va.attributeValue?.attribute?.name,
-          value: va.attributeValue?.value,
+      categoryIds: existing.productCategories?.map((c: SafeAny) => c.categoryId) || [],
+      collectionIds: existing.productCollections?.map((c: SafeAny) => c.collectionId) || [],
+      homepageCollections: existing.homepageCollections || [],
+      images:
+        existing.images?.map((img: SafeAny) => ({
+          url: img.url,
+          altText: img.altText,
+          sortOrder: img.sortOrder,
         })) || [],
-      })) || [],
+      variants:
+        existing.variants?.map((v: SafeAny) => ({
+          sku: `${v.sku}-COPY-${Math.floor(Math.random() * 1000)}`,
+          barcode: v.barcode ? `${v.barcode}-COPY` : null,
+          price: Number(v.price) || 0,
+          comparePrice: v.comparePrice ? Number(v.comparePrice) : null,
+          costPrice: v.costPrice ? Number(v.costPrice) : null,
+          quantity: v.inventoryItem?.quantity || 0,
+          weight: v.weight ? Number(v.weight) : null,
+          width: v.width ? Number(v.width) : null,
+          height: v.height ? Number(v.height) : null,
+          length: v.length ? Number(v.length) : null,
+          isActive: v.isActive,
+          attributes:
+            v.variantAttributes?.map((va: SafeAny) => ({
+              name: va.attributeValue?.attribute?.name,
+              value: va.attributeValue?.value,
+            })) || [],
+        })) || [],
       seoTitle: existing.seo?.metaTitle || `Copy of ${existing.title}`,
       seoDescription: existing.seo?.metaDescription || '',
       canonicalUrl: existing.seo?.canonicalUrl || '',
@@ -336,7 +347,7 @@ export async function duplicateProductAction(id: string): Promise<ApiResponse<an
       success: true,
       data: JSON.parse(JSON.stringify(result)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return {
       success: false,
       error: {
@@ -346,4 +357,3 @@ export async function duplicateProductAction(id: string): Promise<ApiResponse<an
     };
   }
 }
-

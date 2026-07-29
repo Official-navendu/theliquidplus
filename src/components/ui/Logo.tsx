@@ -1,13 +1,16 @@
-/* eslint-disable @next/next/no-img-element */
 import * as React from 'react';
+import Image from 'next/image';
 
 export function Logo({ className = 'h-8 w-auto' }: { className?: string }) {
   return (
-    <img
+    <Image
       src="/logo.png"
       alt="The Liquid Plus Logo"
+      width={150}
+      height={32}
       className={className}
-      style={{ objectFit: 'contain', height: '32px', width: 'auto' }}
+      priority
+      style={{ objectFit: 'contain' }}
     />
   );
 }

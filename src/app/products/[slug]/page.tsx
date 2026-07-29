@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import * as React from 'react';
 import { db } from '@/lib/db';
 import { notFound } from 'next/navigation';
@@ -7,6 +6,7 @@ import { Header } from '@/components/storefront/Header';
 import { Footer } from '@/components/storefront/Footer';
 import { Star, Shield, Truck, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ProductActions } from '@/features/catalog/components/ProductActions';
 import { ProductGallery } from '@/components/storefront/ProductGallery';
 import { ProductAccordion } from '@/components/storefront/ProductAccordion';
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
   };
 }
 
-function serializeProduct(p: any) {
+function serializeProduct(p: SafeAny) {
   if (!p) return null;
   return {
     ...p,
@@ -55,7 +55,7 @@ function serializeProduct(p: any) {
           updatedAt: p.brand.updatedAt?.toISOString?.() || p.brand.updatedAt,
         }
       : null,
-    productCategories: (p.productCategories || []).map((pc: any) => ({
+    productCategories: (p.productCategories || []).map((pc: SafeAny) => ({
       ...pc,
       category: pc.category
         ? {
@@ -65,15 +65,16 @@ function serializeProduct(p: any) {
           }
         : null,
     })),
-    images: (p.images || []).map((img: any) => ({
+    images: (p.images || []).map((img: SafeAny) => ({
       ...img,
       createdAt: img.createdAt?.toISOString?.() || img.createdAt,
       updatedAt: img.updatedAt?.toISOString?.() || img.updatedAt,
     })),
-    variants: (p.variants || []).map((v: any) => ({
+    variants: (p.variants || []).map((v: SafeAny) => ({
       ...v,
       price: v.price !== null && v.price !== undefined ? Number(v.price) : 0,
-      comparePrice: v.comparePrice !== null && v.comparePrice !== undefined ? Number(v.comparePrice) : null,
+      comparePrice:
+        v.comparePrice !== null && v.comparePrice !== undefined ? Number(v.comparePrice) : null,
       costPrice: v.costPrice !== null && v.costPrice !== undefined ? Number(v.costPrice) : null,
       weight: v.weight !== null && v.weight !== undefined ? Number(v.weight) : null,
       length: v.length !== null && v.length !== undefined ? Number(v.length) : null,
@@ -89,7 +90,7 @@ function serializeProduct(p: any) {
           }
         : null,
     })),
-    reviews: (p.reviews || []).map((r: any) => ({
+    reviews: (p.reviews || []).map((r: SafeAny) => ({
       ...r,
       createdAt: r.createdAt?.toISOString?.() || r.createdAt,
       updatedAt: r.updatedAt?.toISOString?.() || r.updatedAt,
@@ -101,8 +102,12 @@ function serializeProduct(p: any) {
             customerProfile: r.user.customerProfile
               ? {
                   ...r.user.customerProfile,
-                  createdAt: r.user.customerProfile.createdAt?.toISOString?.() || r.user.customerProfile.createdAt,
-                  updatedAt: r.user.customerProfile.updatedAt?.toISOString?.() || r.user.customerProfile.updatedAt,
+                  createdAt:
+                    r.user.customerProfile.createdAt?.toISOString?.() ||
+                    r.user.customerProfile.createdAt,
+                  updatedAt:
+                    r.user.customerProfile.updatedAt?.toISOString?.() ||
+                    r.user.customerProfile.updatedAt,
                 }
               : null,
           }
@@ -141,10 +146,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const baseVariant = product.variants[0] || {};
   const price = Number(baseVariant.price) || 1500;
   const compareAtPrice = baseVariant.comparePrice ? Number(baseVariant.comparePrice) : undefined;
-  const rating = product.reviews.length > 0 ? product.reviews.reduce((acc: number, r: any) => acc + (r.rating || 5), 0) / product.reviews.length : 4.8;
+  const rating =
+    product.reviews.length > 0
+      ? product.reviews.reduce((acc: number, r: SafeAny) => acc + (r.rating || 5), 0) /
+        product.reviews.length
+      : 4.8;
 
   const firstCategory = product.productCategories?.[0]?.category;
-  const categoryIds = product.productCategories.map((pc: any) => pc.categoryId);
+  const categoryIds = product.productCategories.map((pc: SafeAny) => pc.categoryId);
 
   // Query related products from same category
   const related = await db.product.findMany({
@@ -165,27 +174,36 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-zinc-800 font-sans text-left">
+    <div className="flex min-h-screen flex-col bg-white text-left font-sans text-zinc-800">
       <AnnouncementBar />
       <Header />
 
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-12 w-full">
+      <main className="mx-auto w-full max-w-7xl flex-grow px-6 py-12">
         {/* Breadcrumbs */}
-        <div className="text-[10px] uppercase tracking-wider text-zinc-400 flex items-center space-x-2 mb-8">
-          <Link href="/" className="hover:text-[#FF4D00] transition-colors">Home</Link>
+        <div className="mb-8 flex items-center space-x-2 text-[10px] tracking-wider text-zinc-400 uppercase">
+          <Link href="/" className="transition-colors hover:text-[#FF4D00]">
+            Home
+          </Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-[#FF4D00] transition-colors">Shop</Link>
+          <Link href="/shop" className="transition-colors hover:text-[#FF4D00]">
+            Shop
+          </Link>
           <span>/</span>
           {firstCategory && (
             <>
-              <Link href={`/categories/${firstCategory.slug}`} className="hover:text-[#FF4D00] transition-colors">{firstCategory.name}</Link>
+              <Link
+                href={`/categories/${firstCategory.slug}`}
+                className="transition-colors hover:text-[#FF4D00]"
+              >
+                {firstCategory.name}
+              </Link>
               <span>/</span>
             </>
           )}
-          <span className="text-zinc-800 font-bold">{product.title}</span>
+          <span className="font-bold text-zinc-800">{product.title}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-12">
+        <div className="mb-12 grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
           {/* Images Gallery */}
           <ProductGallery images={product.images} title={product.title} />
 
@@ -193,19 +211,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <div className="space-y-6">
             <div className="space-y-2">
               {product.brand && (
-                <span className="text-[10px] tracking-[0.25em] text-[#FF4D00] uppercase font-black block">
+                <span className="block text-[10px] font-black tracking-[0.25em] text-[#FF4D00] uppercase">
                   {product.brand.name}
                 </span>
               )}
-              <h1 className="text-3xl font-light uppercase tracking-widest leading-tight text-zinc-900">
+              <h1 className="text-3xl leading-tight font-light tracking-widest text-zinc-900 uppercase">
                 {product.title}
               </h1>
-              
+
               {/* Ratings */}
-              <div className="flex items-center space-x-2 text-xs text-zinc-500 pt-1">
+              <div className="flex items-center space-x-2 pt-1 text-xs text-zinc-500">
                 <div className="flex text-[#FF4D00]">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(rating) ? 'fill-current' : 'text-zinc-200'}`} />
+                    <Star
+                      key={i}
+                      className={`h-3.5 w-3.5 ${i < Math.round(rating) ? 'fill-current' : 'text-zinc-200'}`}
+                    />
                   ))}
                 </div>
                 <span className="font-bold text-zinc-800">{rating.toFixed(1)}</span>
@@ -213,18 +234,24 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </div>
             </div>
 
-            <div className="border-t border-b border-zinc-200/80 py-4 space-y-2 font-num">
+            <div className="font-num space-y-2 border-t border-b border-zinc-200/80 py-4">
               <div className="flex items-center space-x-3">
-                <span className="text-2xl font-black text-[#FF4D00]">${price.toLocaleString('en-US')}</span>
+                <span className="text-2xl font-black text-[#FF4D00]">
+                  ${price.toLocaleString('en-US')}
+                </span>
                 {compareAtPrice && (
-                  <span className="text-sm text-zinc-400 line-through">${compareAtPrice.toLocaleString('en-US')}</span>
+                  <span className="text-sm text-zinc-400 line-through">
+                    ${compareAtPrice.toLocaleString('en-US')}
+                  </span>
                 )}
               </div>
-              <span className="text-[9px] uppercase tracking-wider text-green-600 font-bold block">
-                {(baseVariant.inventoryItem?.quantity || 0) > 0 ? '✓ Product is in stock and ready' : '✕ Out of stock / Made to order'}
+              <span className="block text-[9px] font-bold tracking-wider text-green-600 uppercase">
+                {(baseVariant.inventoryItem?.quantity || 0) > 0
+                  ? '✓ Product is in stock and ready'
+                  : '✕ Out of stock / Made to order'}
               </span>
               {price >= 10 && (
-                <span className="inline-flex items-center text-[9px] uppercase tracking-wider text-green-600 font-black bg-green-500/10 px-2 py-0.5 rounded-[3px] border border-green-500/20 mt-1">
+                <span className="mt-1 inline-flex items-center rounded-[3px] border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-green-600 uppercase">
                   FREE SHIPPING
                 </span>
               )}
@@ -235,16 +262,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
 
             {/* Specifications Details */}
-            <div className="bg-zinc-50 border border-zinc-200/80 p-4 rounded-xl space-y-3">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-[#FF4D00]">Specifications</h4>
-              <div className="grid grid-cols-2 gap-4 text-[10px] uppercase tracking-wider">
+            <div className="space-y-3 rounded-xl border border-zinc-200/80 bg-zinc-50 p-4">
+              <h4 className="text-[10px] font-black tracking-widest text-[#FF4D00] uppercase">
+                Specifications
+              </h4>
+              <div className="grid grid-cols-2 gap-4 text-[10px] tracking-wider uppercase">
                 <div>
-                  <span className="text-zinc-400 block">SKU Code</span>
-                  <span className="font-bold text-zinc-800 block mt-0.5">{baseVariant.sku || 'N/A'}</span>
+                  <span className="block text-zinc-400">SKU Code</span>
+                  <span className="mt-0.5 block font-bold text-zinc-800">
+                    {baseVariant.sku || 'N/A'}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-zinc-400 block">Volume / Weight</span>
-                  <span className="font-bold text-zinc-800 block mt-0.5">{baseVariant.weight ? `${Number(baseVariant.weight)} kg` : 'Standard Bottle'}</span>
+                  <span className="block text-zinc-400">Volume / Weight</span>
+                  <span className="mt-0.5 block font-bold text-zinc-800">
+                    {baseVariant.weight ? `${Number(baseVariant.weight)} kg` : 'Standard Bottle'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -255,16 +288,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
 
             {/* Policy highlights */}
-            <div className="grid grid-cols-3 gap-4 border-t border-zinc-200/80 pt-6 text-[9px] uppercase tracking-wider text-zinc-455">
-              <div className="flex flex-col items-center text-center space-y-1">
+            <div className="text-zinc-455 grid grid-cols-3 gap-4 border-t border-zinc-200/80 pt-6 text-[9px] tracking-wider uppercase">
+              <div className="flex flex-col items-center space-y-1 text-center">
                 <Shield className="h-5 w-5 text-[#FF4D00]" />
                 <span className="font-bold text-zinc-500">100% Genuine</span>
               </div>
-              <div className="flex flex-col items-center text-center space-y-1">
+              <div className="flex flex-col items-center space-y-1 text-center">
                 <Truck className="h-5 w-5 text-[#FF4D00]" />
                 <span className="font-bold text-zinc-500">Fast Courier</span>
               </div>
-              <div className="flex flex-col items-center text-center space-y-1">
+              <div className="flex flex-col items-center space-y-1 text-center">
                 <RotateCcw className="h-5 w-5 text-[#FF4D00]" />
                 <span className="font-bold text-zinc-500">Slick Returns</span>
               </div>
@@ -273,27 +306,47 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </div>
 
         {/* Product Information Accordion */}
-        <ProductAccordion description={product.description} reviews={product.reviews} rating={rating} />
+        <ProductAccordion
+          description={product.description}
+          reviews={product.reviews}
+          rating={rating}
+        />
 
         {/* Related Products Grid */}
         {related.length > 0 && (
-          <section className="border-t border-zinc-200/80 pt-12 mt-16 space-y-8">
-            <h3 className="text-lg font-light uppercase tracking-widest text-zinc-900">
+          <section className="mt-16 space-y-8 border-t border-zinc-200/80 pt-12">
+            <h3 className="text-lg font-light tracking-widest text-zinc-900 uppercase">
               Related Products
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {related.map((rel: any) => {
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+              {related.map((rel: SafeAny) => {
                 const relPrice = Number(rel.variants[0]?.price) || 1200;
                 return (
-                  <div key={rel.id} className="border border-zinc-200/80 bg-zinc-50/50 p-4 rounded-2xl flex flex-col justify-between text-left space-y-3 hover:border-[#FF4D00]/30 hover:shadow-md transition-all duration-300">
-                    <div className="aspect-square bg-white flex items-center justify-center p-2 rounded-xl border border-zinc-100">
-                      <img src={rel.images[0]?.url || 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600'} alt={rel.title} className="max-h-full max-w-full object-contain" />
+                  <div
+                    key={rel.id}
+                    className="flex flex-col justify-between space-y-3 rounded-2xl border border-zinc-200/80 bg-zinc-50/50 p-4 text-left transition-all duration-300 hover:border-[#FF4D00]/30 hover:shadow-md"
+                  >
+                    <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-zinc-100 bg-white p-2">
+                      <Image
+                        src={
+                          rel.images[0]?.url ||
+                          'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600'
+                        }
+                        alt={rel.title}
+                        fill
+                        className="object-contain p-2"
+                        unoptimized={(rel.images[0]?.url || '').startsWith('data:')}
+                      />
                     </div>
                     <div>
                       <Link href={`/products/${rel.slug}`}>
-                        <h4 className="text-xs font-bold text-zinc-800 hover:text-[#FF4D00] transition-colors truncate">{rel.title}</h4>
+                        <h4 className="truncate text-xs font-bold text-zinc-800 transition-colors hover:text-[#FF4D00]">
+                          {rel.title}
+                        </h4>
                       </Link>
-                      <span className="text-[#FF4D00] font-num text-xs font-black block mt-1">${relPrice.toLocaleString('en-US')}</span>
+                      <span className="font-num mt-1 block text-xs font-black text-[#FF4D00]">
+                        ${relPrice.toLocaleString('en-US')}
+                      </span>
                     </div>
                   </div>
                 );

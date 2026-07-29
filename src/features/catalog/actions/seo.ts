@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { db } from '@/lib/db';
@@ -24,11 +23,11 @@ export async function getAllSeoRoutesAction() {
       { id: 'checkout', title: 'Checkout', slug: '/checkout' },
     ];
 
-    const routes: any[] = [];
+    const routes: SafeAny[] = [];
 
     // Add static routes
     for (const sp of staticPages) {
-      const meta = metadataList.find(m => m.entityType === SeoType.PAGE && m.entityId === sp.id);
+      const meta = metadataList.find((m) => m.entityType === SeoType.PAGE && m.entityId === sp.id);
       routes.push({
         id: sp.id,
         type: 'PAGE',
@@ -44,7 +43,9 @@ export async function getAllSeoRoutesAction() {
 
     // Add categories
     for (const cat of categories) {
-      const meta = metadataList.find(m => m.entityType === SeoType.CATEGORY && m.entityId === cat.id);
+      const meta = metadataList.find(
+        (m) => m.entityType === SeoType.CATEGORY && m.entityId === cat.id,
+      );
       routes.push({
         id: cat.id,
         type: 'CATEGORY',
@@ -60,7 +61,9 @@ export async function getAllSeoRoutesAction() {
 
     // Add products
     for (const prod of products) {
-      const meta = metadataList.find(m => m.entityType === SeoType.PRODUCT && m.entityId === prod.id);
+      const meta = metadataList.find(
+        (m) => m.entityType === SeoType.PRODUCT && m.entityId === prod.id,
+      );
       routes.push({
         id: prod.id,
         type: 'PRODUCT',
@@ -76,7 +79,9 @@ export async function getAllSeoRoutesAction() {
 
     // Add CMS pages
     for (const page of cmsPages) {
-      const meta = metadataList.find(m => m.entityType === SeoType.PAGE && m.entityId === page.id);
+      const meta = metadataList.find(
+        (m) => m.entityType === SeoType.PAGE && m.entityId === page.id,
+      );
       routes.push({
         id: page.id,
         type: 'PAGE',
@@ -91,7 +96,7 @@ export async function getAllSeoRoutesAction() {
     }
 
     return { success: true, data: routes };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { message: error.message } };
   }
 }
@@ -135,7 +140,7 @@ export async function saveSeoMetadataAction(data: {
 
     revalidatePath('/');
     return { success: true };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { message: error.message } };
   }
 }

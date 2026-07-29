@@ -26,27 +26,27 @@ async function assertManager() {
   if (!allowed.includes(user.role)) throw new Error('Insufficient permissions');
 }
 
-export async function getBrandsAction(): Promise<ApiResponse<any[]>> {
+export async function getBrandsAction(): Promise<ApiResponse<SafeAny[]>> {
   try {
     await assertManager();
     const list = await repo.getBrands();
     return { success: true, data: JSON.parse(JSON.stringify(list)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function getBrandByIdAction(id: string): Promise<ApiResponse<any>> {
+export async function getBrandByIdAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const item = await repo.getBrandById(id);
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function createBrandAction(input: any): Promise<ApiResponse<any>> {
+export async function createBrandAction(input: SafeAny): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const validated = brandSchema.parse(input);
@@ -54,12 +54,12 @@ export async function createBrandAction(input: any): Promise<ApiResponse<any>> {
     revalidatePath('/');
     revalidatePath('/shop');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'CREATE_ERROR', message: error.message } };
   }
 }
 
-export async function updateBrandAction(id: string, input: any): Promise<ApiResponse<any>> {
+export async function updateBrandAction(id: string, input: SafeAny): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const validated = brandSchema.parse(input);
@@ -68,19 +68,19 @@ export async function updateBrandAction(id: string, input: any): Promise<ApiResp
     revalidatePath('/shop');
     revalidatePath('/brands/[slug]', 'page');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'UPDATE_ERROR', message: error.message } };
   }
 }
 
-export async function deleteBrandAction(id: string): Promise<ApiResponse<any>> {
+export async function deleteBrandAction(id: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertManager();
     const item = await repo.deleteBrand(id);
     revalidatePath('/');
     revalidatePath('/shop');
     return { success: true, data: JSON.parse(JSON.stringify(item)) };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'DELETE_ERROR', message: error.message } };
   }
 }

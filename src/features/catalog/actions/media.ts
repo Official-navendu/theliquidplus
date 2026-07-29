@@ -8,14 +8,19 @@ import { UserType } from '@prisma/client';
 async function assertMediaManager() {
   const user = await getCurrentUser();
   if (!user) throw new Error('Unauthorized');
-  const allowed: UserType[] = [UserType.SUPER_ADMIN, UserType.ADMIN, UserType.PRODUCT_MANAGER, UserType.CONTENT_WRITER];
+  const allowed: UserType[] = [
+    UserType.SUPER_ADMIN,
+    UserType.ADMIN,
+    UserType.PRODUCT_MANAGER,
+    UserType.CONTENT_WRITER,
+  ];
   if (!allowed.includes(user.role)) throw new Error('Insufficient permissions');
 }
 
 export async function getMediaImagesAction(): Promise<ApiResponse<string[]>> {
   try {
     await assertMediaManager();
-    
+
     // Fetch all image sources concurrently to eliminate waterfall
     const [productImages, blogImages, brandLogos, customSetting] = await Promise.all([
       db.productImage.findMany({
@@ -31,7 +36,7 @@ export async function getMediaImagesAction(): Promise<ApiResponse<string[]>> {
       }),
       db.storeSetting.findUnique({
         where: { key: 'media_library_images' },
-      })
+      }),
     ]);
 
     const customImages: string[] = customSetting ? (customSetting.value as string[]) : [];
@@ -47,12 +52,12 @@ export async function getMediaImagesAction(): Promise<ApiResponse<string[]>> {
       success: true,
       data: Array.from(urls),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'FETCH_ERROR', message: error.message } };
   }
 }
 
-export async function addMediaImageAction(url: string): Promise<ApiResponse<any>> {
+export async function addMediaImageAction(url: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertMediaManager();
 
@@ -79,12 +84,12 @@ export async function addMediaImageAction(url: string): Promise<ApiResponse<any>
       success: true,
       data: JSON.parse(JSON.stringify(item)),
     };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'UPLOAD_ERROR', message: error.message } };
   }
 }
 
-export async function deleteMediaImageAction(url: string): Promise<ApiResponse<any>> {
+export async function deleteMediaImageAction(url: string): Promise<ApiResponse<SafeAny>> {
   try {
     await assertMediaManager();
 
@@ -102,7 +107,7 @@ export async function deleteMediaImageAction(url: string): Promise<ApiResponse<a
     }
 
     return { success: true, data: null };
-  } catch (error: any) {
+  } catch (error: SafeAny) {
     return { success: false, error: { code: 'DELETE_ERROR', message: error.message } };
   }
 }

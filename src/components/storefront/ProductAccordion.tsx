@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import * as React from 'react';
@@ -7,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductAccordionProps {
   description: string;
-  reviews: any[];
+  reviews: SafeAny[];
   rating: number;
 }
 
@@ -31,17 +30,19 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
   return (
     <div className="space-y-4 pt-8">
       {/* 1. Description */}
-      <div className="border border-zinc-200/80 rounded-2xl overflow-hidden bg-white shadow-sm transition-all duration-300">
+      <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300">
         <button
           onClick={() => toggle(0)}
           type="button"
-          className="w-full flex items-center justify-between px-6 py-5 text-left font-bold uppercase tracking-wider text-xs text-zinc-800 hover:bg-zinc-50/50 transition-colors outline-none"
+          className="flex w-full items-center justify-between px-6 py-5 text-left text-xs font-bold tracking-wider text-zinc-800 uppercase transition-colors outline-none hover:bg-zinc-50/50"
         >
           <div className="flex items-center space-x-2.5">
             <Sparkles className="h-4 w-4 text-[#FF4D00]" />
             <span>Product Description</span>
           </div>
-          <ChevronDown className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 0 ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 0 ? 'rotate-180' : ''}`}
+          />
         </button>
         <AnimatePresence initial={false}>
           {openIndex === 0 && (
@@ -52,7 +53,7 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-6 pt-2 text-zinc-600 text-xs sm:text-sm font-light leading-relaxed space-y-4">
+              <div className="space-y-4 px-6 pt-2 pb-6 text-xs leading-relaxed font-light text-zinc-600 sm:text-sm">
                 <p>{description}</p>
               </div>
             </motion.div>
@@ -61,17 +62,19 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
       </div>
 
       {/* 2. Customer Reviews */}
-      <div className="border border-zinc-200/80 rounded-2xl overflow-hidden bg-white shadow-sm transition-all duration-300">
+      <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300">
         <button
           onClick={() => toggle(1)}
           type="button"
-          className="w-full flex items-center justify-between px-6 py-5 text-left font-bold uppercase tracking-wider text-xs text-zinc-800 hover:bg-zinc-50/50 transition-colors outline-none"
+          className="flex w-full items-center justify-between px-6 py-5 text-left text-xs font-bold tracking-wider text-zinc-800 uppercase transition-colors outline-none hover:bg-zinc-50/50"
         >
           <div className="flex items-center space-x-2.5">
             <Award className="h-4 w-4 text-[#FF4D00]" />
             <span>Customer Reviews ({reviews.length})</span>
           </div>
-          <ChevronDown className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 1 ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 1 ? 'rotate-180' : ''}`}
+          />
         </button>
         <AnimatePresence initial={false}>
           {openIndex === 1 && (
@@ -82,32 +85,41 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-6 pt-2 space-y-6">
+              <div className="space-y-6 px-6 pt-2 pb-6">
                 {/* Rating summary layout */}
-                <div className="flex flex-col md:flex-row md:items-center gap-6 pb-6 border-b border-zinc-100">
+                <div className="flex flex-col gap-6 border-b border-zinc-100 pb-6 md:flex-row md:items-center">
                   <div className="space-y-1">
                     <span className="text-3xl font-black text-zinc-800">{rating.toFixed(1)}</span>
-                    <div className="flex text-[#FF4D00] space-x-0.5">
+                    <div className="flex space-x-0.5 text-[#FF4D00]">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`h-4 w-4 ${i < Math.round(rating) ? 'fill-current' : 'text-zinc-200'}`} />
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < Math.round(rating) ? 'fill-current' : 'text-zinc-200'}`}
+                        />
                       ))}
                     </div>
-                    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest block pt-1">
+                    <span className="block pt-1 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
                       Based on {reviews.length} reviews
                     </span>
                   </div>
 
                   {/* Stacking score bars */}
-                  <div className="flex-grow space-y-1.5 max-w-xs">
+                  <div className="max-w-xs flex-grow space-y-1.5">
                     {ratingBreakdown.map((count, idx) => {
                       const stars = 5 - idx;
                       const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                       return (
-                        <div key={idx} className="flex items-center text-[10px] text-zinc-500 font-semibold space-x-2">
+                        <div
+                          key={idx}
+                          className="flex items-center space-x-2 text-[10px] font-semibold text-zinc-500"
+                        >
                           <span className="w-3 text-right">{stars}</span>
                           <span className="text-zinc-300">★</span>
-                          <div className="flex-grow h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-[#FF4D00]" style={{ width: `${percentage}%` }} />
+                          <div className="h-1.5 flex-grow overflow-hidden rounded-full bg-zinc-100">
+                            <div
+                              className="h-full bg-[#FF4D00]"
+                              style={{ width: `${percentage}%` }}
+                            />
                           </div>
                           <span className="w-6 text-left">{count}</span>
                         </div>
@@ -118,27 +130,37 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
 
                 <div className="space-y-4">
                   {reviews.length === 0 ? (
-                    <div className="py-8 text-center text-zinc-400 text-[10px] uppercase font-bold tracking-wider">
+                    <div className="py-8 text-center text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                       No reviews yet for this product. Be the first to share your detailing results!
                     </div>
                   ) : (
-                    reviews.map((rev: any) => {
+                    reviews.map((rev: SafeAny) => {
                       const reviewer = rev.user?.customerProfile?.firstName
                         ? `${rev.user.customerProfile.firstName} ${rev.user.customerProfile.lastName || ''}`.trim()
                         : 'Verified Detailer';
                       return (
-                        <div key={rev.id} className="border border-zinc-200/60 bg-zinc-50/50 p-6 rounded-2xl text-xs space-y-2">
-                          <div className="flex justify-between items-center">
+                        <div
+                          key={rev.id}
+                          className="space-y-2 rounded-2xl border border-zinc-200/60 bg-zinc-50/50 p-6 text-xs"
+                        >
+                          <div className="flex items-center justify-between">
                             <span className="font-bold text-zinc-700">{reviewer}</span>
-                            <span className="text-zinc-400 text-[10px]">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                            <span className="text-[10px] text-zinc-400">
+                              {new Date(rev.createdAt).toLocaleDateString()}
+                            </span>
                           </div>
-                          <div className="flex text-[#FF4D00] space-x-0.5 font-num">
+                          <div className="font-num flex space-x-0.5 text-[#FF4D00]">
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <Star key={i} className={`h-3.5 w-3.5 ${i < rev.rating ? 'fill-current' : 'text-zinc-200'}`} />
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${i < rev.rating ? 'fill-current' : 'text-zinc-200'}`}
+                              />
                             ))}
                           </div>
-                          {rev.title && <span className="font-bold text-zinc-800 block">{rev.title}</span>}
-                          <p className="text-zinc-500 leading-relaxed font-light">{rev.comment}</p>
+                          {rev.title && (
+                            <span className="block font-bold text-zinc-800">{rev.title}</span>
+                          )}
+                          <p className="leading-relaxed font-light text-zinc-500">{rev.comment}</p>
                         </div>
                       );
                     })
@@ -151,17 +173,19 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
       </div>
 
       {/* 3. How To Use */}
-      <div className="border border-zinc-200/80 rounded-2xl overflow-hidden bg-white shadow-sm transition-all duration-300">
+      <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300">
         <button
           onClick={() => toggle(2)}
           type="button"
-          className="w-full flex items-center justify-between px-6 py-5 text-left font-bold uppercase tracking-wider text-xs text-zinc-800 hover:bg-zinc-50/50 transition-colors outline-none"
+          className="flex w-full items-center justify-between px-6 py-5 text-left text-xs font-bold tracking-wider text-zinc-800 uppercase transition-colors outline-none hover:bg-zinc-50/50"
         >
           <div className="flex items-center space-x-2.5">
             <HelpCircle className="h-4 w-4 text-[#FF4D00]" />
             <span>How To Use</span>
           </div>
-          <ChevronDown className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 2 ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${openIndex === 2 ? 'rotate-180' : ''}`}
+          />
         </button>
         <AnimatePresence initial={false}>
           {openIndex === 2 && (
@@ -172,14 +196,19 @@ export function ProductAccordion({ description, reviews, rating }: ProductAccord
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-6 pt-2 text-zinc-600 text-xs sm:text-sm font-light leading-relaxed space-y-4">
+              <div className="space-y-4 px-6 pt-2 pb-6 text-xs leading-relaxed font-light text-zinc-600 sm:text-sm">
                 <p>For professional results, follow these application directions:</p>
-                <ol className="list-decimal pl-5 space-y-2">
+                <ol className="list-decimal space-y-2 pl-5">
                   <li>Shake container thoroughly to mix formulation active agents.</li>
                   <li>Ensure the vehicle surface is completely washed, decontaminated, and dry.</li>
                   <li>Apply a few drops of product onto a microfiber applicator pad.</li>
-                  <li>Work in small, overlapping sections (e.g. 50cm x 50cm) to distribute evenly.</li>
-                  <li>Allow 1-2 minutes to flash, then gently buff with a clean microfiber towel to a high-gloss slick finish.</li>
+                  <li>
+                    Work in small, overlapping sections (e.g. 50cm x 50cm) to distribute evenly.
+                  </li>
+                  <li>
+                    Allow 1-2 minutes to flash, then gently buff with a clean microfiber towel to a
+                    high-gloss slick finish.
+                  </li>
                 </ol>
               </div>
             </motion.div>
