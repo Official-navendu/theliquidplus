@@ -4,11 +4,11 @@ import * as React from 'react';
 import { getInventoryAction, updateStockAction } from '@/features/catalog/actions/inventory';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Edit3, Check, X, RotateCcw } from 'lucide-react';
+import { Edit3, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminInventoryPage() {
-  const [data, setData] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<SafeAny[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [editQty, setEditQty] = React.useState<number>(0);
@@ -23,7 +23,7 @@ export default function AdminInventoryPage() {
       } else {
         toast.error(res.error?.message || 'Failed to query inventory ledger');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate with inventory database ledger');
     } finally {
       setLoading(false);
@@ -50,7 +50,7 @@ export default function AdminInventoryPage() {
       } else {
         toast.error(res.error?.message || 'Failed to update stock');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setSaving(false);
@@ -68,14 +68,14 @@ export default function AdminInventoryPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="Stock & Inventory Control"
         description="Monitor real-time warehouse stock reserves, adjust product quantities, and audit variants allocations."
       />
 
       <AdminCard>
-        <AdminTable<any>
+        <AdminTable<SafeAny>
           isLoading={loading}
           columns={[
             { key: 'sku', label: 'SKU Code', sortable: true },
@@ -84,7 +84,9 @@ export default function AdminInventoryPage() {
               key: 'price',
               label: 'Price',
               sortable: true,
-              render: (row) => <span className="font-num">${Number(row.price).toLocaleString()}</span>,
+              render: (row) => (
+                <span className="font-num">${Number(row.price).toLocaleString()}</span>
+              ),
             },
             {
               key: 'stock',
@@ -98,12 +100,12 @@ export default function AdminInventoryPage() {
                         type="number"
                         value={editQty}
                         onChange={(e) => setEditQty(Math.max(0, parseInt(e.target.value) || 0))}
-                        className="w-20 bg-black border border-white/20 text-white px-2 py-1 rounded text-xs outline-none"
+                        className="w-20 rounded border border-white/20 bg-black px-2 py-1 text-xs text-white outline-none"
                       />
                       <button
                         onClick={() => handleSave(row.id)}
                         disabled={saving}
-                        className="p-1 bg-[#FF4D00] hover:bg-[#E04400] text-white rounded cursor-pointer border-0 disabled:opacity-50"
+                        className="cursor-pointer rounded border-0 bg-[#FF4D00] p-1 text-white hover:bg-[#E04400] disabled:opacity-50"
                         title="Save Stock"
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -111,7 +113,7 @@ export default function AdminInventoryPage() {
                       <button
                         onClick={() => setEditingId(null)}
                         disabled={saving}
-                        className="p-1 bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white rounded cursor-pointer"
+                        className="cursor-pointer rounded border border-white/10 bg-zinc-900 p-1 text-zinc-400 hover:text-white"
                         title="Cancel"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -119,12 +121,14 @@ export default function AdminInventoryPage() {
                     </div>
                   ) : (
                     <>
-                      <span className={`font-num font-bold ${row.stock <= 5 ? 'text-[#FF4D00]' : 'text-zinc-300'}`}>
+                      <span
+                        className={`font-num font-bold ${row.stock <= 5 ? 'text-[#FF4D00]' : 'text-zinc-300'}`}
+                      >
                         {row.stock} units
                       </span>
                       <button
                         onClick={() => handleEdit(row.id, row.stock)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-500 hover:text-white transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-500 transition-all hover:border-white hover:text-white"
                         title="Adjust Quantity"
                       >
                         <Edit3 className="h-3.5 w-3.5" />

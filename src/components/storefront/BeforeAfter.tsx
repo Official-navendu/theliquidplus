@@ -63,7 +63,7 @@ export function BeforeAfter() {
 
   return (
     <section className="border-b border-[#EAEAEA] bg-white py-14 text-[#0A0A0A]">
-      <div className="mx-auto max-w-4xl px-6">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:max-w-6xl">
         <div className="mb-8 space-y-2 text-center">
           <span className="block text-[8px] font-black tracking-[0.25em] text-[#FF4D00] uppercase">
             Detailing Transformation
@@ -79,7 +79,7 @@ export function BeforeAfter() {
         </div>
 
         {/* Tab switch buttons */}
-        <div className="mb-8 flex items-center justify-center space-x-3">
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-0 sm:space-x-3">
           {(['Exterior', 'Interior', 'Tyres'] as const).map((tab) => {
             const isActive = tab === activeTab;
             return (
@@ -99,8 +99,8 @@ export function BeforeAfter() {
           })}
         </div>
 
-        {/* Sliding comparison frame */}
-        <div className="relative h-[320px] w-full cursor-ew-resize overflow-hidden rounded-[24px] border border-zinc-200 bg-zinc-50 shadow-sm select-none md:h-[400px]">
+        {/* Sliding comparison frame — larger visual impact */}
+        <div className="relative h-[360px] w-full cursor-ew-resize overflow-hidden rounded-[24px] border border-zinc-200 bg-zinc-50 shadow-sm select-none sm:h-[440px] md:h-[520px] lg:h-[580px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -119,7 +119,7 @@ export function BeforeAfter() {
                   src={current.beforeUrl}
                   alt={current.beforeLabel}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 800px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1152px"
                   className={current.beforeClass}
                   loading="lazy"
                 />
@@ -139,7 +139,7 @@ export function BeforeAfter() {
                   src={current.afterUrl}
                   alt={current.afterLabel}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 800px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1152px"
                   className={current.afterClass}
                   loading="lazy"
                 />

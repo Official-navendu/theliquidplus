@@ -15,6 +15,8 @@ export interface Product {
   inStock: boolean;
   isNew: boolean;
   isFeatured: boolean;
+  isTrending?: boolean;
+  isBestSeller?: boolean;
   productType: 'liquid' | 'coating' | 'accessory' | 'kit';
   collections: string[];
 }
@@ -33,7 +35,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=600',
     shortDescription: 'Advanced nanotech silane coat forming a high-gloss crystalline layer.',
-    description: 'Ultimate Ceramic Coating 9H represents the pinnacle of paint protection chemistry. It creates a molecular bond with clear coats to shield against light scratches, UV rays, acidic rain, and harsh road chemicals.',
+    description:
+      'Ultimate Ceramic Coating 9H represents the pinnacle of paint protection chemistry. It creates a molecular bond with clear coats to shield against light scratches, UV rays, acidic rain, and harsh road chemicals.',
     inStock: true,
     isNew: true,
     isFeatured: true,
@@ -53,7 +56,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1605558191976-9a00b77faac0?q=80&w=600',
     shortDescription: 'Infused with reduced graphene oxide for elite heat and spot resistance.',
-    description: 'Our Graphene Coating Pro utilizes premium nano-graphene platelets to provide a high-slickness finish with water contact angle of over 115 degrees, preventing water spots.',
+    description:
+      'Our Graphene Coating Pro utilizes premium nano-graphene platelets to provide a high-slickness finish with water contact angle of over 115 degrees, preventing water spots.',
     inStock: true,
     isNew: true,
     isFeatured: true,
@@ -72,7 +76,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1507136566006-cfc505b114fc?q=80&w=600',
     shortDescription: 'pH-neutral, extreme slickness pre-wash foam to float road grit.',
-    description: 'HydroFoam creates thick clingy foam blankets that lift dirt off paint surfaces, reducing scratch risks during wash sponge contact.',
+    description:
+      'HydroFoam creates thick clingy foam blankets that lift dirt off paint surfaces, reducing scratch risks during wash sponge contact.',
     inStock: true,
     isNew: false,
     isFeatured: true,
@@ -91,7 +96,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=600',
     shortDescription: 'Cleans, nourishes, and adds UV barriers on premium leather trims.',
-    description: 'Leaves a clean, non-greasy satin sheen with authentic leather scent while shielding against dashboard cracking.',
+    description:
+      'Leaves a clean, non-greasy satin sheen with authentic leather scent while shielding against dashboard cracking.',
     inStock: true,
     isNew: false,
     isFeatured: true,
@@ -111,7 +117,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1605558191976-9a00b77faac0?q=80&w=600',
     shortDescription: 'Color-changing active chemical melting brake dust on impact.',
-    description: 'Apex Iron Off targets baked iron fallout, turning bright purple as it dissolves contaminants on alloy rims safely.',
+    description:
+      'Apex Iron Off targets baked iron fallout, turning bright purple as it dissolves contaminants on alloy rims safely.',
     inStock: true,
     isNew: false,
     isFeatured: true,
@@ -130,7 +137,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1507136566006-cfc505b114fc?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600',
     shortDescription: 'Spray and wipe gloss enhancer and clay lubricant formula.',
-    description: 'Perfect for removing light dust and fingerprints, adding immediate depth, shine, and minor hydrophobic beading.',
+    description:
+      'Perfect for removing light dust and fingerprints, adding immediate depth, shine, and minor hydrophobic beading.',
     inStock: true,
     isNew: false,
     isFeatured: true,
@@ -149,7 +157,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1627124718133-0112dec7a6a4?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600',
     shortDescription: 'Medium-grade detailing clay bar pack with plastic storage case.',
-    description: 'Removes industrial fallout, tree sap, overspray, and bonded contaminants to create glass-smooth paint surfaces.',
+    description:
+      'Removes industrial fallout, tree sap, overspray, and bonded contaminants to create glass-smooth paint surfaces.',
     inStock: false,
     isNew: false,
     isFeatured: false,
@@ -168,7 +177,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600',
     shortDescription: 'Cures to dry-to-the-touch deep black shine with water repellency.',
-    description: 'An advanced ceramic dressing that does not fling off onto body panels, preventing rubber browning for weeks.',
+    description:
+      'An advanced ceramic dressing that does not fling off onto body panels, preventing rubber browning for weeks.',
     inStock: true,
     isNew: false,
     isFeatured: true,
@@ -187,7 +197,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1605558191976-9a00b77faac0?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600',
     shortDescription: 'Ammonia-free glass cleaner leaving zero residue or haze streaks.',
-    description: 'Safe for tinted windows. Easily cuts through road film, bug splatters, vinyl haze, and smoke deposits.',
+    description:
+      'Safe for tinted windows. Easily cuts through road film, bug splatters, vinyl haze, and smoke deposits.',
     inStock: true,
     isNew: false,
     isFeatured: false,
@@ -206,7 +217,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600',
     shortDescription: 'Edgeless, high-pile 600 GSM microfiber cloths for scratch-free buffs.',
-    description: 'Perfect for buffing waxes, sealants, quick detailers, or interior cleaning jobs safely.',
+    description:
+      'Perfect for buffing waxes, sealants, quick detailers, or interior cleaning jobs safely.',
     inStock: true,
     isNew: false,
     isFeatured: false,
@@ -225,7 +237,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1627124718133-0112dec7a6a4?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=600',
     shortDescription: 'Soft foam core blocks wrapped in fine microfiber threads.',
-    description: 'Ideal for laying ceramic coatings, glazes, dressings, or wax coatings onto delicate paint panels.',
+    description:
+      'Ideal for laying ceramic coatings, glazes, dressings, or wax coatings onto delicate paint panels.',
     inStock: true,
     isNew: false,
     isFeatured: false,
@@ -245,7 +258,8 @@ export const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600',
     hoverImage: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=600',
     shortDescription: 'Full collection of shampoos, coatings, detailers, and applicators.',
-    description: 'The complete detailing arsenal for professionals. Contains Ceramic Coating 9H, Snow Shampoo, Leather Guard, Glass Cleaner, Towels, and Applicator blocks.',
+    description:
+      'The complete detailing arsenal for professionals. Contains Ceramic Coating 9H, Snow Shampoo, Leather Guard, Glass Cleaner, Towels, and Applicator blocks.',
     inStock: true,
     isNew: true,
     isFeatured: true,

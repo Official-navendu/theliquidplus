@@ -1,23 +1,26 @@
 'use client';
 
 import * as React from 'react';
-import { getCustomersAction, updateCustomerStatusAction } from '@/features/catalog/actions/customerAdmin';
+import {
+  getCustomersAction,
+  updateCustomerStatusAction,
+} from '@/features/catalog/actions/customerAdmin';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Eye, Edit3, ShieldAlert, Users, Sparkles, UserCheck, UserX } from 'lucide-react';
+import { Eye, UserCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 import { UserStatus } from '@prisma/client';
 import Link from 'next/link';
 
 export default function AdminCustomersPage() {
-  const [data, setData] = React.useState<any[]>([]);
-  const [total, setTotal] = React.useState(0);
+  const [data, setData] = React.useState<SafeAny[]>([]);
+  const [_total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
 
   // Filters state
-  const [search, setSearch] = React.useState('');
-  const [selectedStatus, setSelectedStatus] = React.useState<UserStatus | 'ALL'>('ALL');
-  const [page, setPage] = React.useState(1);
+  const [search, _setSearch] = React.useState('');
+  const [selectedStatus, _setSelectedStatus] = React.useState<UserStatus | 'ALL'>('ALL');
+  const [page, _setPage] = React.useState(1);
   const [limit] = React.useState(50); // Fetch all to allow AdminTable client filters/sorting/search
 
   const loadCustomers = React.useCallback(async () => {
@@ -36,7 +39,7 @@ export default function AdminCustomersPage() {
       } else {
         toast.error(res.error?.message || 'Failed to query customer directory');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate with customer directory ledger');
     } finally {
       setLoading(false);
@@ -48,7 +51,8 @@ export default function AdminCustomersPage() {
   }, [loadCustomers]);
 
   const handleStatusToggle = async (userId: string, currentStatus: UserStatus) => {
-    const nextStatus = currentStatus === UserStatus.ACTIVE ? UserStatus.SUSPENDED : UserStatus.ACTIVE;
+    const nextStatus =
+      currentStatus === UserStatus.ACTIVE ? UserStatus.SUSPENDED : UserStatus.ACTIVE;
     try {
       const res = await updateCustomerStatusAction(userId, nextStatus);
       if (res.success) {
@@ -57,7 +61,7 @@ export default function AdminCustomersPage() {
       } else {
         toast.error(res.error?.message || 'Failed to update customer status');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     }
   };
@@ -65,9 +69,14 @@ export default function AdminCustomersPage() {
   const tableData = React.useMemo(() => {
     return data.map((user) => {
       const profile = user.customerProfile || {};
-      const fullName = profile.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : 'Anonymous customer';
+      const fullName = profile.firstName
+        ? `${profile.firstName} ${profile.lastName || ''}`.trim()
+        : 'Anonymous customer';
       const ordersCount = profile.totalOrdersCount || user.orders?.length || 0;
-      const lifetimeSpend = Number(profile.lifetimeSpend) || user.orders?.reduce((acc: number, cur: any) => acc + Number(cur.totalAmount), 0) || 0;
+      const lifetimeSpend =
+        Number(profile.lifetimeSpend) ||
+        user.orders?.reduce((acc: number, cur: SafeAny) => acc + Number(cur.totalAmount), 0) ||
+        0;
       const aov = ordersCount > 0 ? lifetimeSpend / ordersCount : 0;
       const wishlistCount = user.wishlist?._count?.wishlistItems || 0;
       const reviewsCount = user._count?.reviews || 0;
@@ -92,21 +101,21 @@ export default function AdminCustomersPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="Customer Directory"
         description="Inspect registered customer profiles, total transaction values, reward accounts, and orders count."
       />
 
       <AdminCard>
-        <AdminTable<any>
+        <AdminTable<SafeAny>
           isLoading={loading}
           columns={[
             {
               key: 'avatar',
               label: 'User',
               render: (row) => (
-                <div className="h-8 w-8 rounded-full bg-[#FF4D00]/10 border border-[#FF4D00]/20 text-[#FF4D00] flex items-center justify-center font-bold text-xs">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#FF4D00]/20 bg-[#FF4D00]/10 text-xs font-bold text-[#FF4D00]">
                   {row.avatar}
                 </div>
               ),
@@ -118,7 +127,9 @@ export default function AdminCustomersPage() {
               key: 'ordersCount',
               label: 'Orders Count',
               sortable: true,
-              render: (row) => <span className="font-num font-semibold">{row.ordersCount} transactions</span>,
+              render: (row) => (
+                <span className="font-num font-semibold">{row.ordersCount} transactions</span>
+              ),
             },
             {
               key: 'lifetimeSpend',
@@ -144,31 +155,39 @@ export default function AdminCustomersPage() {
               key: 'wishlistCount',
               label: 'Wishlist items',
               sortable: true,
-              render: (row) => <span className="font-num font-semibold">{row.wishlistCount} items</span>,
+              render: (row) => (
+                <span className="font-num font-semibold">{row.wishlistCount} items</span>
+              ),
             },
             {
               key: 'reviewsCount',
               label: 'Reviews',
               sortable: true,
-              render: (row) => <span className="font-num font-semibold">{row.reviewsCount} reviews</span>,
+              render: (row) => (
+                <span className="font-num font-semibold">{row.reviewsCount} reviews</span>
+              ),
             },
             {
               key: 'couponsCount',
               label: 'Coupons Used',
               sortable: true,
-              render: (row) => <span className="font-num font-semibold">{row.couponsCount} claims</span>,
+              render: (row) => (
+                <span className="font-num font-semibold">{row.couponsCount} claims</span>
+              ),
             },
             {
               key: 'status',
               label: 'Status',
               render: (row) => {
-                const colors: any = {
+                const colors: SafeAny = {
                   ACTIVE: 'bg-green-500/10 border-green-500/20 text-green-500',
                   SUSPENDED: 'bg-red-500/10 border-red-500/20 text-red-500',
                   INACTIVE: 'bg-zinc-800 border-white/5 text-zinc-500',
                 };
                 return (
-                  <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${colors[row.status] || colors.INACTIVE}`}>
+                  <span
+                    className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${colors[row.status] || colors.INACTIVE}`}
+                  >
                     {row.status}
                   </span>
                 );
@@ -182,17 +201,21 @@ export default function AdminCustomersPage() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/admin/customers/${row.id}`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="View Details"
                   >
                     <Eye className="h-3.5 w-3.5" />
                   </Link>
                   <button
                     onClick={() => handleStatusToggle(row.id, row.status)}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                    className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title={row.status === UserStatus.ACTIVE ? 'Suspend User' : 'Activate User'}
                   >
-                    {row.status === UserStatus.ACTIVE ? <UserX className="h-3.5 w-3.5 text-red-500" /> : <UserCheck className="h-3.5 w-3.5 text-green-500" />}
+                    {row.status === UserStatus.ACTIVE ? (
+                      <UserX className="h-3.5 w-3.5 text-red-500" />
+                    ) : (
+                      <UserCheck className="h-3.5 w-3.5 text-green-500" />
+                    )}
                   </button>
                 </div>
               ),

@@ -2,9 +2,10 @@ import { z } from 'zod';
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
+  DIRECT_URL: z.string().url(),
   NEXTAUTH_SECRET: z.string().min(1),
   NEXTAUTH_URL: z.string().url(),
-  
+
   CLOUDINARY_CLOUD_NAME: z.string().min(1),
   CLOUDINARY_API_KEY: z.string().min(1),
   CLOUDINARY_API_SECRET: z.string().min(1),
@@ -29,6 +30,7 @@ const envSchema = z.object({
 // Perform validation
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
+  DIRECT_URL: process.env.DIRECT_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
@@ -59,7 +61,7 @@ if (isServer) {
     console.error(JSON.stringify(parsed.error.format(), null, 2));
     throw new Error('Invalid environment variables. Please check your .env file configurations.');
   }
-  
+
   env = parsed.data;
 } else {
   // Client side fallback for non-sensitive placeholders if required in future

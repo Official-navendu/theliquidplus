@@ -2,12 +2,15 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, RefreshCw, Trash2, ShoppingBag } from 'lucide-react';
+import { X, RefreshCw, Trash2, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '../hooks/useCartStore';
 import Image from 'next/image';
 
 export function CompareDrawer() {
-  const { compareList, removeFromCompare, clearCompare, addToCart } = useCartStore();
+  const compareList = useCartStore((state) => state.compareList);
+  const removeFromCompare = useCartStore((state) => state.removeFromCompare);
+  const clearCompare = useCartStore((state) => state.clearCompare);
+  const addToCart = useCartStore((state) => state.addToCart);
   const [isOpen, setIsOpen] = React.useState(true);
 
   if (compareList.length === 0) {
@@ -111,7 +114,7 @@ export function CompareDrawer() {
                     onClick={() => addToCart(product, '500ml', 1)}
                     className="flex w-full items-center justify-center space-x-1.5 rounded bg-white py-2 text-[9px] font-black tracking-widest text-black uppercase transition-colors hover:bg-[#FF4D00] hover:text-black"
                   >
-                    <ShoppingBag className="h-3 w-3" />
+                    <ShoppingCart className="h-3 w-3" />
                     <span>Add to Bag</span>
                   </button>
                 </div>

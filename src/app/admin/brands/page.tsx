@@ -15,14 +15,14 @@ import { AdminConfirmDialog } from '@/components/admin/AdminFeedbackPrimitives';
 import { useForm } from 'react-hook-form';
 
 export default function AdminBrandsPage() {
-  const [data, setData] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<SafeAny[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [editorOpen, setEditorOpen] = React.useState(false);
-  const [editingBrand, setEditingBrand] = React.useState<any>(null);
-  
+  const [editingBrand, setEditingBrand] = React.useState<SafeAny>(null);
+
   // Confirm delete states
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [_isDeleting, setIsDeleting] = React.useState(false);
 
   const { register, handleSubmit, setValue, reset, watch } = useForm({
     defaultValues: {
@@ -41,7 +41,13 @@ export default function AdminBrandsPage() {
   // Auto slug
   React.useEffect(() => {
     if (watchName && !editingBrand) {
-      setValue('slug', watchName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+      setValue(
+        'slug',
+        watchName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, ''),
+      );
     }
   }, [watchName, setValue, editingBrand]);
 
@@ -54,7 +60,7 @@ export default function AdminBrandsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to query brands catalog');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate with catalog database ledger');
     } finally {
       setLoading(false);
@@ -65,7 +71,7 @@ export default function AdminBrandsPage() {
     loadBrands();
   }, [loadBrands]);
 
-  const handleEditClick = (brand: any) => {
+  const handleEditClick = (brand: SafeAny) => {
     setEditingBrand(brand);
     reset({
       name: brand.name,
@@ -93,7 +99,7 @@ export default function AdminBrandsPage() {
     setEditorOpen(true);
   };
 
-  const onSubmit = async (formValues: any) => {
+  const onSubmit = async (formValues: SafeAny) => {
     try {
       let res;
       if (editingBrand) {
@@ -109,7 +115,7 @@ export default function AdminBrandsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to save brand details');
       }
-    } catch (err) {
+    } catch {
       toast.error('Error submitting brand details to ledger');
     }
   };
@@ -125,7 +131,7 @@ export default function AdminBrandsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to delete brand');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setIsDeleting(false);
@@ -158,14 +164,14 @@ export default function AdminBrandsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="Automotive Brands"
         description="Manage premium laboratory manufacturers and partner detailers catalog lists."
         actions={
           <button
             onClick={handleCreateClick}
-            className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer border-0"
+            className="flex cursor-pointer items-center space-x-1.5 rounded-xl border-0 bg-[#FF4D00] px-5 py-2.5 text-[10px] font-bold tracking-wider text-white uppercase transition-all hover:bg-[#E04400]"
           >
             <Plus className="h-4 w-4" />
             <span>Add Brand</span>
@@ -173,21 +179,24 @@ export default function AdminBrandsPage() {
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
         {/* Left 2 Columns: Table list */}
         <div className="lg:col-span-2">
           <AdminCard>
-            <AdminTable<any>
+            <AdminTable<SafeAny>
               isLoading={loading}
               columns={[
                 {
                   key: 'logoUrl',
                   label: 'Logo',
                   render: (row) => (
-                    <div className="h-9 w-9 rounded-lg bg-zinc-900 border border-white/5 overflow-hidden flex items-center justify-center">
+                    <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-white/5 bg-zinc-900">
                       {row.logoUrl ? (
-                        <img src={row.logoUrl} alt={row.name} className="h-full w-full object-cover" />
+                        <img
+                          src={row.logoUrl}
+                          alt={row.name}
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         <ImageIcon className="h-4.5 w-4.5 text-zinc-600" />
                       )}
@@ -200,13 +209,19 @@ export default function AdminBrandsPage() {
                   key: 'productCount',
                   label: 'Products',
                   sortable: true,
-                  render: (row) => <span className="font-num font-semibold text-zinc-300">{row.productCount} products</span>,
+                  render: (row) => (
+                    <span className="font-num font-semibold text-zinc-300">
+                      {row.productCount} products
+                    </span>
+                  ),
                 },
                 {
                   key: 'status',
                   label: 'Status',
                   render: (row) => (
-                    <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${row.status === 'Active' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-zinc-800 border-white/5 text-zinc-500'}`}>
+                    <span
+                      className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${row.status === 'Active' ? 'border-green-500/20 bg-green-500/10 text-green-500' : 'border-white/5 bg-zinc-800 text-zinc-500'}`}
+                    >
                       {row.status}
                     </span>
                   ),
@@ -218,14 +233,14 @@ export default function AdminBrandsPage() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditClick(row.raw)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                         title="Edit Brand"
                       >
                         <Edit3 className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => setDeleteTarget(row.id)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-red-500 rounded-lg text-zinc-400 hover:text-red-500 transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-red-500 hover:text-red-500"
                         title="Delete Brand"
                       >
                         <Trash className="h-3.5 w-3.5" />
@@ -242,14 +257,14 @@ export default function AdminBrandsPage() {
 
         {/* Right 1 Column: Inline Editor Panel */}
         {editorOpen ? (
-          <div className="lg:col-span-1 border border-white/5 bg-[#0a0a0a] p-6 rounded-2xl space-y-6">
-            <div className="border-b border-white/5 pb-3 flex justify-between items-center">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00]">
+          <div className="space-y-6 rounded-2xl border border-white/5 bg-[#0a0a0a] p-6 lg:col-span-1">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <h3 className="text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 {editingBrand ? 'Edit Brand' : 'Create Brand'}
               </h3>
               <button
                 onClick={() => setEditorOpen(false)}
-                className="text-[9px] uppercase tracking-wider text-zinc-400 hover:text-white cursor-pointer bg-transparent border-0"
+                className="cursor-pointer border-0 bg-transparent text-[9px] tracking-wider text-zinc-400 uppercase hover:text-white"
               >
                 ✕ Close
               </button>
@@ -257,57 +272,76 @@ export default function AdminBrandsPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Brand Name</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Brand Name
+                </label>
                 <input
                   type="text"
                   {...register('name')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00]"
+                  className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none focus:border-[#FF4D00]"
                   placeholder="CarPro"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Slug URL</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Slug URL
+                </label>
                 <input
                   type="text"
                   {...register('slug')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00]"
+                  className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none focus:border-[#FF4D00]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Brand Logo</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Brand Logo
+                </label>
                 <div className="flex items-center space-x-3">
-                  <div className="h-12 w-12 rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center overflow-hidden">
+                  <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-white/5 bg-zinc-900">
                     {watch('logoUrl') ? (
-                      <img src={watch('logoUrl')!} alt="Logo preview" className="h-full w-full object-cover" />
+                      <img
+                        src={watch('logoUrl')!}
+                        alt="Logo preview"
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <ImageIcon className="h-5 w-5 text-zinc-600" />
                     )}
                   </div>
-                  <label className="px-3 py-1.5 bg-zinc-900 border border-white/10 hover:border-white rounded text-[9px] uppercase font-bold tracking-wider cursor-pointer select-none text-white">
+                  <label className="cursor-pointer rounded border border-white/10 bg-zinc-900 px-3 py-1.5 text-[9px] font-bold tracking-wider text-white uppercase select-none hover:border-white">
                     <span>Choose Logo</span>
-                    <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
                   </label>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Description</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Description
+                </label>
                 <textarea
                   {...register('description')}
                   rows={2}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] resize-none"
+                  className="w-full resize-none rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none focus:border-[#FF4D00]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Status</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Status
+                </label>
                 <select
                   {...register('isActive', {
                     setValueAs: (val) => val === 'true',
                   })}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none cursor-pointer"
+                  className="w-full cursor-pointer rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                 >
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>
@@ -315,38 +349,44 @@ export default function AdminBrandsPage() {
               </div>
 
               {/* SEO Tags */}
-              <div className="space-y-3 pt-3 border-t border-white/5">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-500 font-black">Search Engine Optimization</span>
+              <div className="space-y-3 border-t border-white/5 pt-3">
+                <span className="text-[9px] font-black tracking-widest text-zinc-500 uppercase">
+                  Search Engine Optimization
+                </span>
                 <div className="space-y-1">
-                  <label className="text-[9px] uppercase text-zinc-400 font-bold">Meta Title</label>
+                  <label className="text-[9px] font-bold text-zinc-400 uppercase">Meta Title</label>
                   <input
                     type="text"
                     {...register('seoTitle')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-1.5 rounded-lg"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-1.5 text-white"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] uppercase text-zinc-400 font-bold">Meta Description</label>
+                  <label className="text-[9px] font-bold text-zinc-400 uppercase">
+                    Meta Description
+                  </label>
                   <textarea
                     {...register('seoDescription')}
                     rows={2}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-1.5 rounded-lg resize-none"
+                    className="w-full resize-none rounded-lg border border-white/10 bg-black px-3 py-1.5 text-white"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 mt-2"
+                className="mt-2 w-full cursor-pointer rounded-xl border-0 bg-[#FF4D00] py-2.5 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-[#E04400]"
               >
                 Save Brand
               </button>
             </form>
           </div>
         ) : (
-          <div className="lg:col-span-1 border border-dashed border-white/10 bg-black/20 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-3 text-zinc-500">
+          <div className="flex flex-col items-center justify-center space-y-3 rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-center text-zinc-500 lg:col-span-1">
             <Award className="h-8 w-8 text-zinc-600" />
-            <span className="text-[10px] uppercase font-bold tracking-wider">Select a partner manufacturer to edit, or click add brand to link new formulas</span>
+            <span className="text-[10px] font-bold tracking-wider uppercase">
+              Select a partner manufacturer to edit, or click add brand to link new formulas
+            </span>
           </div>
         )}
       </div>

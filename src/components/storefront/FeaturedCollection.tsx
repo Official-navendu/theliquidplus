@@ -2,13 +2,13 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ShoppingBag, Eye, RefreshCw, Star, X, Minus, Plus } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, RefreshCw, Star, X, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useCartStore } from '@/features/catalog/hooks/useCartStore';
-import { PRODUCTS, Product } from '@/features/catalog/constants/products';
+import type { Product } from '@/features/catalog/constants/products';
 
 const tabs = ['Curated', 'Trending Now', 'Essentials'];
 
@@ -70,16 +70,14 @@ export function FeaturedCollection({
   const [qvQty, setQvQty] = React.useState(1);
 
   // Cart Store Actions
-  const {
-    wishlist,
-    compareList,
-    addToCart,
-    setMiniCartOpen,
-    addToWishlist,
-    removeFromWishlist,
-    addToCompare,
-    removeFromCompare,
-  } = useCartStore();
+  const wishlist = useCartStore((state) => state.wishlist);
+  const compareList = useCartStore((state) => state.compareList);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const setMiniCartOpen = useCartStore((state) => state.setMiniCartOpen);
+  const addToWishlist = useCartStore((state) => state.addToWishlist);
+  const removeFromWishlist = useCartStore((state) => state.removeFromWishlist);
+  const addToCompare = useCartStore((state) => state.addToCompare);
+  const removeFromCompare = useCartStore((state) => state.removeFromCompare);
 
   const sourceData = initialProductsData || fallbackProductsData;
   const products = sourceData[activeTab] || sourceData['Curated'] || [];
@@ -97,13 +95,8 @@ export function FeaturedCollection({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [quickViewProduct]);
 
-  // Action Helpers
+  // Action Helpers — build Product from card data (avoid shipping full PRODUCTS catalog to client)
   const getFullProduct = (item: ProductItem): Product => {
-    const found =
-      PRODUCTS.find((p) => p.slug === item.slug) || PRODUCTS.find((p) => p.id === item.id);
-    if (found) return found;
-
-    // Fallback Product object if DB ID doesn't exist in local mock constants
     return {
       id: item.id,
       name: item.name,
@@ -226,7 +219,7 @@ export function FeaturedCollection({
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => {
+            {products.map((product, index) => {
               const inWishlist = wishlist.some((p) => p.id === product.id);
               const inCompare = compareList.some((p) => p.id === product.id);
 
@@ -254,8 +247,10 @@ export function FeaturedCollection({
                       src={product.image}
                       alt={product.name}
                       fill
-                      sizes="(max-width: 640px) 100vw, 25vw"
+                      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
                       className="object-cover"
+                      priority={index < 4}
+                      loading={index < 4 ? 'eager' : 'lazy'}
                       unoptimized={product.image?.startsWith('data:')}
                     />
 
@@ -266,7 +261,7 @@ export function FeaturedCollection({
                         className="cursor-pointer rounded-xl border border-[#EAEAEA] bg-white p-2.5 text-black shadow-lg transition-all hover:bg-[#FF4D00] hover:text-white"
                         aria-label="Add to cart"
                       >
-                        <ShoppingBag className="h-3.5 w-3.5" />
+                        <ShoppingCart className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={(e) => handleQuickViewAction(e, product)}

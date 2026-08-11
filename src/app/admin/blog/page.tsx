@@ -4,16 +4,16 @@ import * as React from 'react';
 import { getBlogPostsAction, deleteBlogPostAction } from '@/features/catalog/actions/cms';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Plus, Trash, Edit3, Eye, Calendar, Sparkles } from 'lucide-react';
+import { Plus, Trash, Edit3, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminConfirmDialog } from '@/components/admin/AdminFeedbackPrimitives';
 import Link from 'next/link';
 
 export default function AdminBlogPostsPage() {
-  const [data, setData] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<SafeAny[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [_isDeleting, setIsDeleting] = React.useState(false);
 
   const loadBlogs = React.useCallback(async () => {
     setLoading(true);
@@ -24,7 +24,7 @@ export default function AdminBlogPostsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to query blog posts');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate with CMS database ledger');
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export default function AdminBlogPostsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to delete blog post');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setIsDeleting(false);
@@ -67,14 +67,14 @@ export default function AdminBlogPostsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="CRM Blog Articles"
         description="Write professional automotive detailing articles, detail instructions guides, and product updates."
         actions={
           <Link
             href="/admin/blog/new"
-            className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer border-0"
+            className="flex cursor-pointer items-center space-x-1.5 rounded-xl border-0 bg-[#FF4D00] px-5 py-2.5 text-[10px] font-bold tracking-wider text-white uppercase transition-all hover:bg-[#E04400]"
           >
             <Plus className="h-4 w-4" />
             <span>Create Article</span>
@@ -83,7 +83,7 @@ export default function AdminBlogPostsPage() {
       />
 
       <AdminCard>
-        <AdminTable<any>
+        <AdminTable<SafeAny>
           isLoading={loading}
           columns={[
             { key: 'title', label: 'Article Title', sortable: true },
@@ -93,13 +93,15 @@ export default function AdminBlogPostsPage() {
               key: 'status',
               label: 'Status',
               render: (row) => {
-                const colors: any = {
+                const colors: SafeAny = {
                   PUBLISHED: 'bg-green-500/10 border-green-500/20 text-green-500',
                   DRAFT: 'bg-zinc-800 border-white/5 text-zinc-500',
                   SCHEDULED: 'bg-amber-500/10 border-amber-500/20 text-amber-500',
                 };
                 return (
-                  <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${colors[row.status] || colors.DRAFT}`}>
+                  <span
+                    className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${colors[row.status] || colors.DRAFT}`}
+                  >
                     {row.status}
                   </span>
                 );
@@ -113,21 +115,21 @@ export default function AdminBlogPostsPage() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/admin/blog/${row.id}`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="View Article"
                   >
                     <Eye className="h-3.5 w-3.5" />
                   </Link>
                   <Link
                     href={`/admin/blog/${row.id}/edit`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="Edit Article"
                   >
                     <Edit3 className="h-3.5 w-3.5" />
                   </Link>
                   <button
                     onClick={() => setDeleteTarget(row.id)}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-red-500 rounded-lg text-zinc-400 hover:text-red-500 transition-all cursor-pointer"
+                    className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-red-500 hover:text-red-500"
                     title="Delete Article"
                   >
                     <Trash className="h-3.5 w-3.5" />

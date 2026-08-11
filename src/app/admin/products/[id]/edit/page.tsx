@@ -22,8 +22,12 @@ export default function AdminEditProductPage({ params }: EditProductPageProps) {
 
   const [loading, setLoading] = React.useState(true);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [product, setProduct] = React.useState<any>(null);
-  const [setup, setSetup] = React.useState<{ brands: any[]; categories: any[]; collections: any[] }>({
+  const [product, setProduct] = React.useState<SafeAny>(null);
+  const [setup, setSetup] = React.useState<{
+    brands: SafeAny[];
+    categories: SafeAny[];
+    collections: SafeAny[];
+  }>({
     brands: [],
     categories: [],
     collections: [],
@@ -46,7 +50,7 @@ export default function AdminEditProductPage({ params }: EditProductPageProps) {
           toast.error(productRes.error?.message || 'Failed to locate product ledger record');
           router.push('/admin/products');
         }
-      } catch (err) {
+      } catch {
         toast.error('Failed to communicate with setup or catalog ledgers');
       } finally {
         setLoading(false);
@@ -55,7 +59,7 @@ export default function AdminEditProductPage({ params }: EditProductPageProps) {
     loadData();
   }, [productId, router]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: SafeAny) => {
     setIsSubmitting(true);
     try {
       const res = await updateProductAction(productId, data);
@@ -66,7 +70,7 @@ export default function AdminEditProductPage({ params }: EditProductPageProps) {
       } else {
         toast.error(res.error?.message || 'Failed to update product record');
       }
-    } catch (err: any) {
+    } catch (err: SafeAny) {
       console.error('Update product submission error:', err);
       toast.error(err?.message || 'Error submitting product modifications');
     } finally {

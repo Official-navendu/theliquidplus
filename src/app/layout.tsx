@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import { Providers } from './providers';
 import { SITE_CONFIG } from '@/config/site';
+import { auth } from '@/lib/auth';
 import './globals.css';
 
 const montserrat = Montserrat({
@@ -38,17 +39,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} font-sans min-h-screen bg-[#0A0A0A] text-white antialiased`}
+        className={`${montserrat.variable} min-h-screen bg-[#0A0A0A] font-sans text-white antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

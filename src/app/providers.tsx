@@ -9,7 +9,15 @@ import { CompareDrawer } from '@/features/catalog/components/CompareDrawer';
 
 import { SessionProvider } from 'next-auth/react';
 
-export function Providers({ children }: { children: React.ReactNode }) {
+import type { Session } from 'next-auth';
+
+export function Providers({
+  children,
+  session,
+}: {
+  children: React.ReactNode;
+  session?: Session | null;
+}) {
   // Creating QueryClient inside a useState hook prevents sharing query cache
   // between users on the server side under Concurrent Features.
   const [queryClient] = React.useState(
@@ -26,7 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
         <QueryClientProvider client={queryClient}>
           {children}

@@ -4,16 +4,16 @@ import * as React from 'react';
 import { getPagesAction, deletePageAction } from '@/features/catalog/actions/cms';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Plus, Trash, Edit3, Eye, FileText } from 'lucide-react';
+import { Plus, Trash, Edit3, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminConfirmDialog } from '@/components/admin/AdminFeedbackPrimitives';
 import Link from 'next/link';
 
 export default function AdminCmsPagesPage() {
-  const [data, setData] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<SafeAny[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [_isDeleting, setIsDeleting] = React.useState(false);
 
   const loadPages = React.useCallback(async () => {
     setLoading(true);
@@ -24,7 +24,7 @@ export default function AdminCmsPagesPage() {
       } else {
         toast.error(res.error?.message || 'Failed to query CMS pages');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate with CMS database ledger');
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export default function AdminCmsPagesPage() {
       } else {
         toast.error(res.error?.message || 'Failed to delete page');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setIsDeleting(false);
@@ -65,14 +65,14 @@ export default function AdminCmsPagesPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="CRM Static Pages"
         description="Configure company profiles, policy pages, terms statements and custom landing pages."
         actions={
           <Link
             href="/admin/cms/pages/new"
-            className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer border-0"
+            className="flex cursor-pointer items-center space-x-1.5 rounded-xl border-0 bg-[#FF4D00] px-5 py-2.5 text-[10px] font-bold tracking-wider text-white uppercase transition-all hover:bg-[#E04400]"
           >
             <Plus className="h-4 w-4" />
             <span>Create Page</span>
@@ -81,7 +81,7 @@ export default function AdminCmsPagesPage() {
       />
 
       <AdminCard>
-        <AdminTable<any>
+        <AdminTable<SafeAny>
           isLoading={loading}
           columns={[
             { key: 'title', label: 'Page Title', sortable: true },
@@ -90,7 +90,9 @@ export default function AdminCmsPagesPage() {
               key: 'status',
               label: 'Status',
               render: (row) => (
-                <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${row.status === 'Active' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-zinc-800 border-white/5 text-zinc-500'}`}>
+                <span
+                  className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${row.status === 'Active' ? 'border-green-500/20 bg-green-500/10 text-green-500' : 'border-white/5 bg-zinc-800 text-zinc-500'}`}
+                >
                   {row.status}
                 </span>
               ),
@@ -102,21 +104,21 @@ export default function AdminCmsPagesPage() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/admin/cms/pages/${row.id}`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="View Page Content"
                   >
                     <Eye className="h-3.5 w-3.5" />
                   </Link>
                   <Link
                     href={`/admin/cms/pages/${row.id}/edit`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="Edit Page"
                   >
                     <Edit3 className="h-3.5 w-3.5" />
                   </Link>
                   <button
                     onClick={() => setDeleteTarget(row.id)}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-red-500 rounded-lg text-zinc-400 hover:text-red-500 transition-all cursor-pointer"
+                    className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-red-500 hover:text-red-500"
                     title="Delete Page"
                   >
                     <Trash className="h-3.5 w-3.5" />

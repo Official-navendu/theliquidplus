@@ -13,30 +13,34 @@ import {
 } from '@/features/catalog/actions/product';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Plus, Download, Upload, Trash, FileSpreadsheet, Eye, Edit3, ShieldAlert, Copy, RotateCcw } from 'lucide-react';
+import { Plus, Download, Upload, Trash, Eye, Edit3, Copy, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminConfirmDialog } from '@/components/admin/AdminFeedbackPrimitives';
 import Link from 'next/link';
 
 export default function AdminProductsPage() {
-  const router = useRouter();
-  const [data, setData] = React.useState<any[]>([]);
-  const [total, setTotal] = React.useState(0);
+  const _router = useRouter();
+  const [data, setData] = React.useState<SafeAny[]>([]);
+  const [_total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
-  const [setup, setSetup] = React.useState<any>({ brands: [], categories: [], collections: [] });
+  const [_setup, setSetup] = React.useState<SafeAny>({
+    brands: [],
+    categories: [],
+    collections: [],
+  });
 
   // Filters state
-  const [search, setSearch] = React.useState('');
-  const [selectedCategory, setSelectedCategory] = React.useState('ALL');
-  const [selectedBrand, setSelectedBrand] = React.useState('ALL');
-  const [selectedStatus, setSelectedStatus] = React.useState('ALL');
-  const [sortBy, setSortBy] = React.useState('newest');
-  const [page, setPage] = React.useState(1);
+  const [search, _setSearch] = React.useState('');
+  const [selectedCategory, _setSelectedCategory] = React.useState('ALL');
+  const [selectedBrand, _setSelectedBrand] = React.useState('ALL');
+  const [selectedStatus, _setSelectedStatus] = React.useState('ALL');
+  const [sortBy, _setSortBy] = React.useState('newest');
+  const [page, _setPage] = React.useState(1);
   const [limit] = React.useState(50); // Fetch all to allow AdminTable client filters/sorting/search
 
   // Confirm delete dialog state
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [_isDeleting, setIsDeleting] = React.useState(false);
 
   // Load Setup and Products Data
   const loadData = React.useCallback(async () => {
@@ -48,7 +52,7 @@ export default function AdminProductsPage() {
           search,
           category: selectedCategory,
           brand: selectedBrand,
-          status: selectedStatus === 'ALL' ? undefined : (selectedStatus as any),
+          status: selectedStatus === 'ALL' ? undefined : (selectedStatus as SafeAny),
           sortBy,
           page,
           limit,
@@ -85,7 +89,7 @@ export default function AdminProductsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to duplicate product');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network error duplicating product');
     }
   };
@@ -99,7 +103,7 @@ export default function AdminProductsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to restore product');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network error restoring product');
     }
   };
@@ -116,7 +120,7 @@ export default function AdminProductsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to archive product');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to communicate product deletion request');
     } finally {
       setIsDeleting(false);
@@ -136,7 +140,7 @@ export default function AdminProductsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to archive products');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to perform bulk operations');
     }
   };
@@ -145,14 +149,14 @@ export default function AdminProductsPage() {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
     try {
-      const res = await bulkUpdateStatusAction(ids, status as any);
+      const res = await bulkUpdateStatusAction(ids, status as SafeAny);
       if (res.success) {
         toast.success(`Successfully set status of ${ids.length} products to ${status}`);
         loadData();
       } else {
         toast.error(res.error?.message || 'Failed to update products status');
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to perform status adjustment');
     }
   };
@@ -163,7 +167,17 @@ export default function AdminProductsPage() {
       toast.warning('No product records available for CSV export');
       return;
     }
-    const headers = ['ID', 'Title', 'Slug', 'SKU', 'Brand', 'Price (USD)', 'Stock Quantity', 'Status', 'Featured'];
+    const headers = [
+      'ID',
+      'Title',
+      'Slug',
+      'SKU',
+      'Brand',
+      'Price (USD)',
+      'Stock Quantity',
+      'Status',
+      'Featured',
+    ];
     const rows = data.map((item) => [
       item.id,
       item.title,
@@ -221,14 +235,14 @@ export default function AdminProductsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="Store Products Catalog"
         description="Configure detailing formulas, pricing strategies, inventory metrics, and variants matrix."
         actions={
-          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold uppercase tracking-wider">
+          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold tracking-wider uppercase">
             {/* Import file label button */}
-            <label className="px-4 py-2.5 bg-zinc-900 border border-white/10 hover:border-white text-white rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer select-none">
+            <label className="flex cursor-pointer items-center space-x-1.5 rounded-xl border border-white/10 bg-zinc-900 px-4 py-2.5 text-white transition-all select-none hover:border-white">
               <Upload className="h-4 w-4" />
               <span>Import CSV</span>
               <input type="file" accept=".csv" onChange={handleImportCSV} className="hidden" />
@@ -237,7 +251,7 @@ export default function AdminProductsPage() {
             {/* Export button */}
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-zinc-900 border border-white/10 hover:border-white text-white rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="flex cursor-pointer items-center space-x-1.5 rounded-xl border border-white/10 bg-zinc-900 px-4 py-2.5 text-white transition-all hover:border-white"
             >
               <Download className="h-4 w-4" />
               <span>Export CSV</span>
@@ -246,7 +260,7 @@ export default function AdminProductsPage() {
             {/* Create launcher link */}
             <Link
               href="/admin/products/new"
-              className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="flex cursor-pointer items-center space-x-1.5 rounded-xl bg-[#FF4D00] px-5 py-2.5 text-white transition-all hover:bg-[#E04400]"
             >
               <Plus className="h-4 w-4" />
               <span>New Product</span>
@@ -257,14 +271,14 @@ export default function AdminProductsPage() {
 
       <AdminCard>
         {/* Table wrapper */}
-        <AdminTable<any>
+        <AdminTable<SafeAny>
           isLoading={loading}
           columns={[
             {
               key: 'image',
               label: 'Image',
               render: (row) => (
-                <div className="h-10 w-10 rounded-lg bg-zinc-900 border border-white/5 overflow-hidden flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-white/5 bg-zinc-900">
                   {row.image ? (
                     <img src={row.image} alt={row.title} className="h-full w-full object-cover" />
                   ) : (
@@ -292,7 +306,9 @@ export default function AdminProductsPage() {
               label: 'Stock',
               sortable: true,
               render: (row) => (
-                <span className={`font-num text-xs font-bold ${row.stock <= 5 ? 'text-[#FF4D00]' : 'text-zinc-300'}`}>
+                <span
+                  className={`font-num text-xs font-bold ${row.stock <= 5 ? 'text-[#FF4D00]' : 'text-zinc-300'}`}
+                >
                   {row.stock} units
                 </span>
               ),
@@ -301,14 +317,16 @@ export default function AdminProductsPage() {
               key: 'status',
               label: 'Status',
               render: (row) => {
-                const colorMap: any = {
+                const colorMap: SafeAny = {
                   ACTIVE: 'bg-green-500/10 border-green-500/20 text-green-500',
                   DRAFT: 'bg-zinc-800 border-white/5 text-zinc-500',
                   REVIEW: 'bg-amber-500/10 border-amber-500/20 text-amber-500',
                   ARCHIVED: 'bg-red-500/10 border-red-500/20 text-red-500',
                 };
                 return (
-                  <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${colorMap[row.status] || colorMap.DRAFT}`}>
+                  <span
+                    className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${colorMap[row.status] || colorMap.DRAFT}`}
+                  >
                     {row.status}
                   </span>
                 );
@@ -322,21 +340,21 @@ export default function AdminProductsPage() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/admin/products/${row.id}`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="View Details"
                   >
                     <Eye className="h-3.5 w-3.5" />
                   </Link>
                   <Link
                     href={`/admin/products/${row.id}/edit`}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all"
+                    className="rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="Edit Product"
                   >
                     <Edit3 className="h-3.5 w-3.5" />
                   </Link>
                   <button
                     onClick={() => handleDuplicate(row.id)}
-                    className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                    className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                     title="Duplicate Product"
                   >
                     <Copy className="h-3.5 w-3.5" />
@@ -344,7 +362,7 @@ export default function AdminProductsPage() {
                   {row.status === 'ARCHIVED' ? (
                     <button
                       onClick={() => handleRestore(row.id)}
-                      className="p-1.5 bg-zinc-900 border border-white/5 hover:border-green-500 rounded-lg text-zinc-400 hover:text-green-500 transition-all cursor-pointer"
+                      className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-green-500 hover:text-green-500"
                       title="Restore Product"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
@@ -352,7 +370,7 @@ export default function AdminProductsPage() {
                   ) : (
                     <button
                       onClick={() => setDeleteTarget(row.id)}
-                      className="p-1.5 bg-zinc-900 border border-white/5 hover:border-red-500 rounded-lg text-zinc-400 hover:text-red-500 transition-all cursor-pointer"
+                      className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-red-500 hover:text-red-500"
                       title="Archive (Soft Delete)"
                     >
                       <Trash className="h-3.5 w-3.5" />
@@ -365,13 +383,13 @@ export default function AdminProductsPage() {
           data={tableData}
           searchPlaceholder="Search products by title, SKU, or brand name..."
           bulkActions={(selectedIds, clearSelection) => (
-            <div className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-wider">
+            <div className="flex items-center space-x-2 text-[10px] font-bold tracking-wider uppercase">
               <button
                 onClick={async () => {
                   await handleBulkStatusChange(selectedIds, 'ACTIVE');
                   clearSelection();
                 }}
-                className="px-2.5 py-1 bg-zinc-900 border border-white/10 hover:border-white text-white rounded cursor-pointer"
+                className="cursor-pointer rounded border border-white/10 bg-zinc-900 px-2.5 py-1 text-white hover:border-white"
               >
                 Publish Selected
               </button>
@@ -380,7 +398,7 @@ export default function AdminProductsPage() {
                   await handleBulkStatusChange(selectedIds, 'DRAFT');
                   clearSelection();
                 }}
-                className="px-2.5 py-1 bg-zinc-900 border border-white/10 hover:border-white text-white rounded cursor-pointer"
+                className="cursor-pointer rounded border border-white/10 bg-zinc-900 px-2.5 py-1 text-white hover:border-white"
               >
                 Draft Selected
               </button>
@@ -389,7 +407,7 @@ export default function AdminProductsPage() {
                   await handleBulkStatusChange(selectedIds, 'ARCHIVED');
                   clearSelection();
                 }}
-                className="px-2.5 py-1 bg-zinc-900 border border-white/10 hover:border-white text-white rounded cursor-pointer"
+                className="cursor-pointer rounded border border-white/10 bg-zinc-900 px-2.5 py-1 text-white hover:border-white"
               >
                 Archive Selected
               </button>
@@ -398,7 +416,7 @@ export default function AdminProductsPage() {
                   await handleBulkDelete(selectedIds);
                   clearSelection();
                 }}
-                className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded cursor-pointer border-0"
+                className="cursor-pointer rounded border-0 bg-red-600 px-2.5 py-1 text-white hover:bg-red-700"
               >
                 Delete Selected
               </button>

@@ -11,18 +11,25 @@ import { getStorefrontProductsAction } from '../actions/storefront';
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
+  products?: Product[];
 }
 
 const popularSearches = ['Ceramic', 'Graphene', 'Snow Foam', 'Microfiber', 'Wheel Cleaner'];
 const initialRecentSearches = ['9H coating', 'snow foam', 'interior guard'];
 
-export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
+export function SearchOverlay({ isOpen, onClose, products }: SearchOverlayProps) {
   const [query, setQuery] = React.useState('');
   const [recentSearches, setRecentSearches] = React.useState<string[]>(initialRecentSearches);
-  const [productsList, setProductsList] = React.useState<Product[]>(PRODUCTS);
+  const [productsList, setProductsList] = React.useState<Product[]>(products || PRODUCTS);
   const [results, setResults] = React.useState<Product[]>([]);
 
   React.useEffect(() => {
+    if (products && products.length > 0) {
+      setProductsList(products);
+      return;
+    }
+    if (!isOpen) return;
+
     async function loadLive() {
       try {
         const res = await getStorefrontProductsAction();
@@ -34,7 +41,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       }
     }
     loadLive();
-  }, []);
+  }, [isOpen, products]);
 
   React.useEffect(() => {
     if (query.trim() === '') {
@@ -42,13 +49,17 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       return;
     }
 
-    const filtered = productsList.filter(
-      (prod) =>
-        prod.name.toLowerCase().includes(query.toLowerCase()) ||
-        prod.category.toLowerCase().includes(query.toLowerCase()) ||
-        prod.brand.toLowerCase().includes(query.toLowerCase()),
-    );
-    setResults(filtered);
+    const handler = setTimeout(() => {
+      const filtered = productsList.filter(
+        (prod) =>
+          prod.name.toLowerCase().includes(query.toLowerCase()) ||
+          prod.category.toLowerCase().includes(query.toLowerCase()) ||
+          prod.brand.toLowerCase().includes(query.toLowerCase()),
+      );
+      setResults(filtered);
+    }, 150);
+
+    return () => clearTimeout(handler);
   }, [query, productsList]);
 
   const handleSelectRecent = (term: string) => {

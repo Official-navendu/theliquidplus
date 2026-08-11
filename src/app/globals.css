@@ -1,67 +1,67 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@plugin "tailwindcss-animate";
+@plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   /* Premium Light Luxury Color System (Storefront Default) */
-  --background: 0 0% 100%;          /* #FFFFFF */
-  --foreground: 0 0% 4%;            /* #0A0A0A */
-  
-  --card: 0 0% 100%;                /* #FFFFFF */
+  --background: 0 0% 100%; /* #FFFFFF */
+  --foreground: 0 0% 4%; /* #0A0A0A */
+
+  --card: 0 0% 100%; /* #FFFFFF */
   --card-foreground: 0 0% 4%;
-  
+
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 4%;
-  
-  --primary: 18 100% 50%;          /* #FF4D00 (Accent Orange) */
+
+  --primary: 18 100% 50%; /* #FF4D00 (Accent Orange) */
   --primary-foreground: 0 0% 100%;
-  
-  --secondary: 0 0% 97%;            /* #F8F8F8 / #FAFAFA */
+
+  --secondary: 0 0% 97%; /* #F8F8F8 / #FAFAFA */
   --secondary-foreground: 0 0% 4%;
-  
-  --muted: 0 0% 95%;                /* Light Gray */
-  --muted-foreground: 0 0% 33%;     /* #555555 */
-  
-  --accent: 18 100% 50%;           /* #FF4D00 (Accent Orange) */
+
+  --muted: 0 0% 95%; /* Light Gray */
+  --muted-foreground: 0 0% 33%; /* #555555 */
+
+  --accent: 18 100% 50%; /* #FF4D00 (Accent Orange) */
   --accent-foreground: 0 0% 100%;
-  
+
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  
-  --border: 0 0% 90%;              /* Light borders #ECECEC */
+
+  --border: 0 0% 90%; /* Light borders #ECECEC */
   --input: 0 0% 100%;
   --ring: 18 100% 50%;
-  --radius: 12px;                  /* Rounded corners 12px */
+  --radius: 12px; /* Rounded corners 12px */
 }
 
 .dark {
   /* Premium Dark Luxury Color System (Admin Panel / Forced Dark) */
-  --background: 0 0% 4%;           /* #0A0A0A */
-  --foreground: 0 0% 100%;         /* #FFFFFF */
-  
-  --card: 0 0% 10%;                /* #1A1A1A */
+  --background: 0 0% 4%; /* #0A0A0A */
+  --foreground: 0 0% 100%; /* #FFFFFF */
+
+  --card: 0 0% 10%; /* #1A1A1A */
   --card-foreground: 0 0% 100%;
-  
+
   --popover: 0 0% 10%;
   --popover-foreground: 0 0% 100%;
-  
+
   --primary: 18 100% 50%;
   --primary-foreground: 0 0% 100%;
-  
+
   --secondary: 0 0% 10%;
   --secondary-foreground: 0 0% 100%;
-  
+
   --muted: 0 0% 15%;
   --muted-foreground: 0 0% 70%;
-  
+
   --accent: 18 100% 50%;
   --accent-foreground: 0 0% 100%;
-  
+
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  
+
   --border: 0 0% 15%;
   --input: 0 0% 15%;
   --ring: 18 100% 50%;
@@ -87,7 +87,7 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 8px);
@@ -98,7 +98,7 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     background-color: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;
@@ -107,7 +107,7 @@
     line-height: 1.6;
     letter-spacing: -0.01em;
   }
-  
+
   main,
   section,
   aside {
@@ -116,33 +116,48 @@
     border-color: hsl(var(--border)) !important;
   }
 
-  /* Header and Footer are strictly dark (locked black) */
-  header,
+  /* Footer and Non-Transparent Headers are strictly dark */
   footer {
-    background-color: #0A0A0A !important;
-    color: #FFFFFF !important;
-    border-color: #1A1A1A !important;
+    background-color: #0a0a0a !important;
+    color: #ffffff !important;
+    border-color: #1a1a1a !important;
+  }
+
+  /* Header defaults to dark unless header-transparent is present */
+  header:not(.header-transparent) {
+    background-color: #0a0a0a !important;
+    color: #ffffff !important;
+    border-color: #1a1a1a !important;
   }
 
   /* Header and Footer sections and main tags should inherit dark styles */
-  header main, header section, header aside,
-  footer main, footer section, footer aside {
-    background-color: #0A0A0A !important;
-    color: #FFFFFF !important;
-    border-color: #1A1A1A !important;
+  header main,
+  header section,
+  header aside,
+  footer main,
+  footer section,
+  footer aside {
+    background-color: #0a0a0a !important;
+    color: #ffffff !important;
+    border-color: #1a1a1a !important;
   }
 
   /* Luxury card containers */
-  div[class*="rounded-xl"],
-  div[class*="rounded-lg"],
-  div[class*="rounded-2xl"],
+  div[class*='rounded-xl'],
+  div[class*='rounded-lg'],
+  div[class*='rounded-2xl'],
   article {
     background-color: hsl(var(--card)) !important;
     color: hsl(var(--foreground)) !important;
     border-color: hsl(var(--border)) !important;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-montserrat), sans-serif !important;
     color: hsl(var(--foreground)) !important;
     font-weight: 700;
@@ -163,7 +178,7 @@ nav a::after {
   display: block;
   width: 0;
   height: 1px;
-  background: #FF4D00;
+  background: #ff4d00;
   transition: width 0.3s ease;
 }
 
@@ -185,9 +200,9 @@ nav a:hover::after {
 .theme-dark span,
 .theme-dark a,
 .theme-dark li {
-  background-color: #0A0A0A !important;
-  color: #FFFFFF !important;
-  border-color: #1A1A1A !important;
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+  border-color: #1a1a1a !important;
 }
 
 .theme-dark .text-zinc-400,
@@ -219,8 +234,8 @@ a.inline-block {
 
 /* Custom premium primary button */
 .btn-primary {
-  background: linear-gradient(135deg, #FF4D00 0%, #CC3D00 100%) !important;
-  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #ff4d00 0%, #cc3d00 100%) !important;
+  color: #ffffff !important;
   box-shadow: 0 4px 15px rgba(255, 77, 0, 0.25) !important;
 }
 
@@ -235,19 +250,21 @@ a.inline-block {
 
 /* Custom premium secondary button */
 .btn-secondary {
-  background: #FFFFFF !important;
-  color: #0A0A0A !important;
-  border: 1px solid #FF4D00 !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  border: 1px solid #ff4d00 !important;
 }
 
 .btn-secondary:hover {
-  background: #FF4D00 !important;
-  color: #FFFFFF !important;
-  border-color: #FF4D00 !important;
+  background: #ff4d00 !important;
+  color: #ffffff !important;
+  border-color: #ff4d00 !important;
 }
 
 /* Inputs, Select, Textareas - defaults to white background */
-input, select, textarea {
+input,
+select,
+textarea {
   background-color: hsl(var(--input)) !important;
   color: hsl(var(--foreground)) !important;
   border: 1px solid hsl(var(--border)) !important;
@@ -256,8 +273,10 @@ input, select, textarea {
   transition: all 0.25s ease !important;
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #FF4D00 !important;
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #ff4d00 !important;
   box-shadow: 0 0 0 3px rgba(255, 77, 0, 0.15) !important;
   outline: none !important;
 }

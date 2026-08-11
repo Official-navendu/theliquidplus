@@ -2,13 +2,17 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCartStore } from '../hooks/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export function MiniCart() {
-  const { cart, isMiniCartOpen, setMiniCartOpen, updateQuantity, removeFromCart } = useCartStore();
+  const cart = useCartStore((state) => state.cart);
+  const isMiniCartOpen = useCartStore((state) => state.isMiniCartOpen);
+  const setMiniCartOpen = useCartStore((state) => state.setMiniCartOpen);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,7 +58,7 @@ export function MiniCart() {
             {/* Header */}
             <div className="border-zinc-150 flex items-center justify-between border-b bg-white p-6">
               <div className="flex items-center space-x-2.5">
-                <ShoppingBag className="h-5 w-5 text-[#FF4D00]" />
+                <ShoppingCart className="h-5 w-5 text-[#FF4D00]" />
                 <span className="text-xs font-black tracking-[0.2em] text-zinc-900 uppercase">
                   Shopping Bag ({cart.length})
                 </span>

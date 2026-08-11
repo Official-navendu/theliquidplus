@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useCartStore } from '../hooks/useCartStore';
 import { Product } from '../constants/products';
-import { Trash2, ShoppingBag } from 'lucide-react';
+import { Trash2, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -111,7 +111,7 @@ export function WishlistPageContainer() {
                   onClick={() => handleMoveToCart(product)}
                   className="flex w-full cursor-pointer items-center justify-center space-x-1.5 rounded border border-white bg-white py-3.5 text-[10px] font-black tracking-widest text-black uppercase transition-colors hover:border-[#FF4D00] hover:bg-[#0A0A0A] hover:text-white disabled:opacity-50"
                 >
-                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <ShoppingCart className="h-3.5 w-3.5" />
                   <span>Move to Bag</span>
                 </button>
               </div>

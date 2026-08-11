@@ -6,7 +6,22 @@ import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimit
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Heading1, Heading2, Heading3, Bold, Italic, Underline, List, Table, Code, Quote, Link2, Image, Play, ArrowLeft } from 'lucide-react';
+import {
+  Heading1,
+  Heading2,
+  Heading3,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Table,
+  Code,
+  Quote,
+  Link2,
+  Image,
+  Play,
+  ArrowLeft,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminCmsPagesNewPage() {
@@ -29,7 +44,13 @@ export default function AdminCmsPagesNewPage() {
   const watchTitle = watch('title');
   React.useEffect(() => {
     if (watchTitle) {
-      setValue('slug', watchTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+      setValue(
+        'slug',
+        watchTitle
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, ''),
+      );
     }
   }, [watchTitle, setValue]);
 
@@ -49,11 +70,14 @@ export default function AdminCmsPagesNewPage() {
     // Refocus & reset selection
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length);
+      textarea.setSelectionRange(
+        start + before.length,
+        start + before.length + selectedText.length,
+      );
     }, 10);
   };
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: SafeAny) => {
     setSubmitting(true);
     try {
       const res = await createPageAction(values);
@@ -63,7 +87,7 @@ export default function AdminCmsPagesNewPage() {
       } else {
         toast.error(res.error?.message || 'Failed to create page');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setSubmitting(false);
@@ -71,9 +95,9 @@ export default function AdminCmsPagesNewPage() {
   };
 
   return (
-    <div className="space-y-8 text-white text-left max-w-4xl">
+    <div className="max-w-4xl space-y-8 text-left text-white">
       <div className="flex items-center space-x-2">
-        <Link href="/admin/cms/pages" className="text-zinc-500 hover:text-white transition-all">
+        <Link href="/admin/cms/pages" className="text-zinc-500 transition-all hover:text-white">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <AdminPageHeader
@@ -83,55 +107,153 @@ export default function AdminCmsPagesNewPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
           {/* Main Body */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             <AdminCard className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Page Title</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Page Title
+                </label>
                 <input
                   type="text"
                   required
                   {...register('title')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] text-xs font-bold"
+                  className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs font-bold text-white outline-none focus:border-[#FF4D00]"
                   placeholder="e.g. Terms of Service"
                 />
               </div>
 
               {/* Rich text formatting toolbar */}
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Page Content (HTML/Markdown Editor)</label>
-                
-                <div className="border border-white/10 rounded-lg overflow-hidden bg-black">
-                  <div className="flex flex-wrap items-center gap-1.5 p-2 bg-zinc-950 border-b border-white/10">
-                    <button type="button" onClick={() => insertText('<h1>', '</h1>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="H1"><Heading1 className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<h2>', '</h2>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="H2"><Heading2 className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<h3>', '</h3>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="H3"><Heading3 className="h-3.5 w-3.5" /></button>
-                    <div className="w-[1px] h-4 bg-white/10 mx-1" />
-                    <button type="button" onClick={() => insertText('<strong>', '</strong>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Bold"><Bold className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<em>', '</em>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Italic"><Italic className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<u>', '</u>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Underline"><Underline className="h-3.5 w-3.5" /></button>
-                    <div className="w-[1px] h-4 bg-white/10 mx-1" />
-                    <button type="button" onClick={() => insertText('<ul>\n  <li>', '</li>\n</ul>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Unordered List"><List className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<blockquote>', '</blockquote>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Blockquote"><Quote className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<pre><code>', '</code></pre>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Code Block"><Code className="h-3.5 w-3.5" /></button>
-                    <div className="w-[1px] h-4 bg-white/10 mx-1" />
-                    <button type="button" onClick={() => insertText('<a href="https://">', '</a>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Link"><Link2 className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<img src="https://" alt="', '" />')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Image"><Image className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<iframe src="https://">', '</iframe>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Embed Video"><Play className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={() => insertText('<table className="w-full border-collapse">\n  <thead>\n    <tr className="border-b">\n      <th>Header</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Cell</td>\n    </tr>\n  </tbody>\n</table>')} className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded cursor-pointer border-0" title="Table"><Table className="h-3.5 w-3.5" /></button>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Page Content (HTML/Markdown Editor)
+                </label>
+
+                <div className="overflow-hidden rounded-lg border border-white/10 bg-black">
+                  <div className="flex flex-wrap items-center gap-1.5 border-b border-white/10 bg-zinc-950 p-2">
+                    <button
+                      type="button"
+                      onClick={() => insertText('<h1>', '</h1>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="H1"
+                    >
+                      <Heading1 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<h2>', '</h2>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="H2"
+                    >
+                      <Heading2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<h3>', '</h3>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="H3"
+                    >
+                      <Heading3 className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="mx-1 h-4 w-[1px] bg-white/10" />
+                    <button
+                      type="button"
+                      onClick={() => insertText('<strong>', '</strong>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Bold"
+                    >
+                      <Bold className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<em>', '</em>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Italic"
+                    >
+                      <Italic className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<u>', '</u>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Underline"
+                    >
+                      <Underline className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="mx-1 h-4 w-[1px] bg-white/10" />
+                    <button
+                      type="button"
+                      onClick={() => insertText('<ul>\n  <li>', '</li>\n</ul>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Unordered List"
+                    >
+                      <List className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<blockquote>', '</blockquote>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Blockquote"
+                    >
+                      <Quote className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<pre><code>', '</code></pre>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Code Block"
+                    >
+                      <Code className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="mx-1 h-4 w-[1px] bg-white/10" />
+                    <button
+                      type="button"
+                      onClick={() => insertText('<a href="https://">', '</a>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Link"
+                    >
+                      <Link2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<img src="https://" alt="', '" />')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Image"
+                    >
+                      <Image className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertText('<iframe src="https://">', '</iframe>')}
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Embed Video"
+                    >
+                      <Play className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        insertText(
+                          '<table className="w-full border-collapse">\n  <thead>\n    <tr className="border-b">\n      <th>Header</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Cell</td>\n    </tr>\n  </tbody>\n</table>',
+                        )
+                      }
+                      className="cursor-pointer rounded border-0 p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      title="Table"
+                    >
+                      <Table className="h-3.5 w-3.5" />
+                    </button>
                   </div>
-                  
+
                   <textarea
                     required
                     {...register('content')}
                     ref={(e) => {
                       register('content').ref(e);
-                      (textAreaRef as any).current = e;
+                      (textAreaRef as SafeAny).current = e;
                     }}
                     rows={12}
-                    className="w-full bg-black text-white p-4 outline-none text-xs leading-relaxed font-mono resize-y"
+                    className="w-full resize-y bg-black p-4 font-mono text-xs leading-relaxed text-white outline-none"
                     placeholder="Compose page html contents..."
                   />
                 </div>
@@ -140,23 +262,29 @@ export default function AdminCmsPagesNewPage() {
 
             {/* SEO Panel */}
             <AdminCard className="space-y-4">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00]">SEO Optimization Metadata</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h3 className="text-xs font-black tracking-widest text-[#FF4D00] uppercase">
+                SEO Optimization Metadata
+              </h3>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Meta Title</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Meta Title
+                  </label>
                   <input
                     type="text"
                     {...register('seoTitle')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="Focus Keyword title"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Meta Description</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Meta Description
+                  </label>
                   <input
                     type="text"
                     {...register('seoDescription')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] text-xs"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none focus:border-[#FF4D00]"
                     placeholder="Brief description for search engines"
                   />
                 </div>
@@ -165,23 +293,27 @@ export default function AdminCmsPagesNewPage() {
           </div>
 
           {/* Sidebar controls */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="space-y-6 lg:col-span-1">
             <AdminCard className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Slug URL</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Slug URL
+                </label>
                 <input
                   type="text"
                   required
                   {...register('slug')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] text-xs font-mono font-bold"
+                  className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 font-mono text-xs font-bold text-white outline-none focus:border-[#FF4D00]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Template Layout</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Template Layout
+                </label>
                 <select
                   {...register('template')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none cursor-pointer text-xs"
+                  className="w-full cursor-pointer rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                 >
                   <option value="DEFAULT">Default Layout</option>
                   <option value="FULL_WIDTH">Full Width Grid</option>
@@ -190,12 +322,14 @@ export default function AdminCmsPagesNewPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Publish Status</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Publish Status
+                </label>
                 <select
                   {...register('isActive', {
                     setValueAs: (val) => val === 'true',
                   })}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none cursor-pointer text-xs"
+                  className="w-full cursor-pointer rounded-lg border border-white/10 bg-black px-3 py-2 text-xs text-white outline-none"
                 >
                   <option value="true">Published</option>
                   <option value="false">Draft / Hidden</option>
@@ -205,13 +339,12 @@ export default function AdminCmsPagesNewPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 disabled:opacity-50 mt-2"
+                className="mt-2 w-full cursor-pointer rounded-xl border-0 bg-[#FF4D00] py-2.5 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-[#E04400] disabled:opacity-50"
               >
                 {submitting ? 'Creating...' : 'Save & Publish Page'}
               </button>
             </AdminCard>
           </div>
-
         </div>
       </form>
     </div>

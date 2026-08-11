@@ -3,7 +3,16 @@
 import * as React from 'react';
 import { useCartStore } from '../hooks/useCartStore';
 import { Product } from '../constants/products';
-import { Heart, Trash2, ArrowRight, ShieldCheck, Award, Truck, RotateCcw } from 'lucide-react';
+import {
+  Heart,
+  Trash2,
+  ArrowRight,
+  ShieldCheck,
+  Award,
+  Truck,
+  RotateCcw,
+  ShoppingCart,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -71,7 +80,7 @@ export function CartPageContainer() {
 
         {cart.length === 0 ? (
           <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border border-white/5 bg-[#0a0a0a] py-20 text-center">
-            <span className="text-4xl">🛒</span>
+            <ShoppingCart className="h-12 w-12 text-[#FF4D00]" />
             <h3 className="text-sm font-semibold tracking-widest text-[#E5E5E5] uppercase">
               Your Cart is Empty
             </h3>

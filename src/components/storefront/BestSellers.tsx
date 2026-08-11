@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, ShoppingBag, Eye, RefreshCw } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, RefreshCw } from 'lucide-react';
 import Image from 'next/image';
 
 const bestSellers = [
@@ -100,20 +100,17 @@ const bestSellers = [
 
 export function BestSellers() {
   return (
-    <section id="best-sellers" className="py-24 bg-black text-white">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        <div className="text-center space-y-4 mb-16">
-          <span className="text-[9px] tracking-[0.3em] text-[#FF4D00] uppercase font-bold">
+    <section id="best-sellers" className="bg-black py-24 text-white">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-16 space-y-4 text-center">
+          <span className="text-[9px] font-bold tracking-[0.3em] text-[#FF4D00] uppercase">
             Best Sellers
           </span>
-          <h2 className="text-3xl font-light tracking-[0.1em] uppercase">
-            Detailing Favorites
-          </h2>
-          <div className="w-12 h-[2px] bg-[#FF4D00] mx-auto mt-4" />
+          <h2 className="text-3xl font-light tracking-[0.1em] uppercase">Detailing Favorites</h2>
+          <div className="mx-auto mt-4 h-[2px] w-12 bg-[#FF4D00]" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {bestSellers.map((product, index) => (
             <motion.div
               key={product.id}
@@ -121,14 +118,13 @@ export function BestSellers() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="group flex flex-col space-y-4 relative bg-[#0a0a0a] p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+              className="group relative flex flex-col space-y-4 rounded-xl border border-white/5 bg-[#0a0a0a] p-4 transition-colors hover:border-white/10"
             >
               {/* Product Image Frame */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#111] rounded-lg">
-                
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[#111]">
                 {/* Discount Badge */}
                 {product.onSale && (
-                  <span className="absolute top-3 left-3 z-10 bg-[#FF4D00] text-black text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-sm">
+                  <span className="absolute top-3 left-3 z-10 rounded-sm bg-[#FF4D00] px-2 py-0.5 text-[8px] font-black tracking-widest text-black uppercase">
                     Sale
                   </span>
                 )}
@@ -138,23 +134,35 @@ export function BestSellers() {
                   alt={product.name}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Overlaid Actions Trigger */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <button className="bg-white text-black hover:bg-[#FF4D00] hover:text-black p-2.5 rounded-none transition-colors border border-white/10 shadow-lg" aria-label="Add to cart">
-                    <ShoppingBag className="h-3.5 w-3.5" />
+                <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 translate-y-3 items-center space-x-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <button
+                    className="rounded-none border border-white/10 bg-white p-2.5 text-black shadow-lg transition-colors hover:bg-[#FF4D00] hover:text-black"
+                    aria-label="Add to cart"
+                  >
+                    <ShoppingCart className="h-3.5 w-3.5" />
                   </button>
-                  <button className="bg-white text-black hover:bg-[#FF4D00] hover:text-black p-2.5 rounded-none transition-colors border border-white/10 shadow-lg" aria-label="Quick View">
+                  <button
+                    className="rounded-none border border-white/10 bg-white p-2.5 text-black shadow-lg transition-colors hover:bg-[#FF4D00] hover:text-black"
+                    aria-label="Quick View"
+                  >
                     <Eye className="h-3.5 w-3.5" />
                   </button>
-                  <button className="bg-white text-black hover:bg-[#FF4D00] hover:text-black p-2.5 rounded-none transition-colors border border-white/10 shadow-lg" aria-label="Compare">
+                  <button
+                    className="rounded-none border border-white/10 bg-white p-2.5 text-black shadow-lg transition-colors hover:bg-[#FF4D00] hover:text-black"
+                    aria-label="Compare"
+                  >
                     <RefreshCw className="h-3.5 w-3.5" />
                   </button>
-                  <button className="bg-white text-black hover:bg-[#FF4D00] hover:text-black p-2.5 rounded-none transition-colors border border-white/10 shadow-lg" aria-label="Add to wishlist">
+                  <button
+                    className="rounded-none border border-white/10 bg-white p-2.5 text-black shadow-lg transition-colors hover:bg-[#FF4D00] hover:text-black"
+                    aria-label="Add to wishlist"
+                  >
                     <Heart className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -162,14 +170,14 @@ export function BestSellers() {
 
               {/* Product Info */}
               <div className="space-y-1">
-                <span className="text-[8px] tracking-[0.2em] text-[#FF4D00] uppercase font-bold">
+                <span className="text-[8px] font-bold tracking-[0.2em] text-[#FF4D00] uppercase">
                   {product.brand}
                 </span>
-                <h3 className="text-xs font-semibold tracking-wide text-[#E5E5E5] group-hover:text-white transition-colors cursor-pointer line-clamp-1">
+                <h3 className="line-clamp-1 cursor-pointer text-xs font-semibold tracking-wide text-[#E5E5E5] transition-colors group-hover:text-white">
                   {product.name}
                 </h3>
-                
-                <span className="text-[9px] tracking-wider text-[#B5B5B5] block">
+
+                <span className="block text-[9px] tracking-wider text-[#B5B5B5]">
                   {product.category}
                 </span>
 
@@ -190,7 +198,6 @@ export function BestSellers() {
                   )}
                 </div>
               </div>
-
             </motion.div>
           ))}
         </div>

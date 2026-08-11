@@ -11,15 +11,27 @@ import {
 } from '@/features/catalog/actions/marketing';
 import { AdminPageHeader, AdminCard } from '@/components/admin/AdminLayoutPrimitives';
 import { AdminTable } from '@/components/admin/AdminTable';
-import { Plus, Trash, Edit3, Tag, Copy, ToggleLeft, ToggleRight, Sparkles, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import {
+  Plus,
+  Trash,
+  Edit3,
+  Tag,
+  Copy,
+  ToggleLeft,
+  ToggleRight,
+  Sparkles,
+  TrendingUp,
+  DollarSign,
+  Activity,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminConfirmDialog } from '@/components/admin/AdminFeedbackPrimitives';
 import { useForm } from 'react-hook-form';
 
 export default function AdminMarketingCouponsPage() {
-  const [data, setData] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<SafeAny[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [analytics, setAnalytics] = React.useState<any>({
+  const [analytics, setAnalytics] = React.useState<SafeAny>({
     usageCount: 0,
     revenueGenerated: 0,
     averageDiscount: 0,
@@ -29,13 +41,19 @@ export default function AdminMarketingCouponsPage() {
   });
 
   const [editorOpen, setEditorOpen] = React.useState(false);
-  const [editingCoupon, setEditingCoupon] = React.useState<any>(null);
-  
+  const [editingCoupon, setEditingCoupon] = React.useState<SafeAny>(null);
+
   // Confirm delete states
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [_isDeleting, setIsDeleting] = React.useState(false);
 
-  const { register, handleSubmit, setValue, reset, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue: _setValue,
+    reset,
+    watch: _watch,
+  } = useForm({
     defaultValues: {
       code: '',
       type: 'PERCENTAGE',
@@ -64,7 +82,7 @@ export default function AdminMarketingCouponsPage() {
       if (analyticsRes.success && analyticsRes.data) {
         setAnalytics(analyticsRes.data);
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to query coupons catalog database');
     } finally {
       setLoading(false);
@@ -75,7 +93,7 @@ export default function AdminMarketingCouponsPage() {
     loadData();
   }, [loadData]);
 
-  const handleEditClick = (c: any) => {
+  const handleEditClick = (c: SafeAny) => {
     setEditingCoupon(c);
     reset({
       code: c.code,
@@ -88,7 +106,7 @@ export default function AdminMarketingCouponsPage() {
       startDate: c.startDate ? new Date(c.startDate).toISOString().split('T')[0] : '',
       endDate: c.endDate ? new Date(c.endDate).toISOString().split('T')[0] : '',
       isActive: c.isActive !== undefined ? c.isActive : true,
-    } as any);
+    } as SafeAny);
     setEditorOpen(true);
   };
 
@@ -105,25 +123,25 @@ export default function AdminMarketingCouponsPage() {
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       isActive: true,
-    } as any);
+    } as SafeAny);
     setEditorOpen(true);
   };
 
   const handleToggleActive = async (id: string, currentActive: boolean) => {
     try {
       const res = await updateCouponAction(id, {
-        code: data.find(c => c.id === id).code,
-        type: data.find(c => c.id === id).type,
-        value: Number(data.find(c => c.id === id).value),
+        code: data.find((c) => c.id === id).code,
+        type: data.find((c) => c.id === id).type,
+        value: Number(data.find((c) => c.id === id).value),
         isActive: !currentActive,
-        startDate: data.find(c => c.id === id).startDate,
-        endDate: data.find(c => c.id === id).endDate,
+        startDate: data.find((c) => c.id === id).startDate,
+        endDate: data.find((c) => c.id === id).endDate,
       });
       if (res.success) {
         toast.success(`Coupon ${!currentActive ? 'activated' : 'deactivated'} successfully`);
         loadData();
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to change status');
     }
   };
@@ -137,12 +155,12 @@ export default function AdminMarketingCouponsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to replicate coupon');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     }
   };
 
-  const onSubmit = async (formValues: any) => {
+  const onSubmit = async (formValues: SafeAny) => {
     try {
       const payload = {
         ...formValues,
@@ -161,13 +179,15 @@ export default function AdminMarketingCouponsPage() {
       }
 
       if (res.success) {
-        toast.success(editingCoupon ? 'Coupon updated successfully' : 'Coupon created successfully');
+        toast.success(
+          editingCoupon ? 'Coupon updated successfully' : 'Coupon created successfully',
+        );
         setEditorOpen(false);
         loadData();
       } else {
         toast.error(res.error?.message || 'Failed to save coupon details');
       }
-    } catch (err) {
+    } catch {
       toast.error('Error submitting coupon details to ledger');
     }
   };
@@ -183,7 +203,7 @@ export default function AdminMarketingCouponsPage() {
       } else {
         toast.error(res.error?.message || 'Failed to delete coupon');
       }
-    } catch (err) {
+    } catch {
       toast.error('Network request failed');
     } finally {
       setIsDeleting(false);
@@ -196,8 +216,13 @@ export default function AdminMarketingCouponsPage() {
       id: coupon.id,
       code: coupon.code,
       type: coupon.type,
-      valueText: coupon.type === 'PERCENTAGE' ? `${Number(coupon.value)}%` : `$${Number(coupon.value).toLocaleString()}`,
-      minCartValue: coupon.minCartValue ? `$${Number(coupon.minCartValue).toLocaleString()}` : 'None',
+      valueText:
+        coupon.type === 'PERCENTAGE'
+          ? `${Number(coupon.value)}%`
+          : `$${Number(coupon.value).toLocaleString()}`,
+      minCartValue: coupon.minCartValue
+        ? `$${Number(coupon.minCartValue).toLocaleString()}`
+        : 'None',
       usage: `${coupon.currentUsageCount} / ${coupon.maxUsageCount || '∞'}`,
       expiry: new Date(coupon.endDate).toLocaleDateString(),
       status: coupon.isActive ? 'Active' : 'Inactive',
@@ -206,14 +231,14 @@ export default function AdminMarketingCouponsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-8 text-white text-left">
+    <div className="space-y-8 text-left text-white">
       <AdminPageHeader
         title="CRM Coupon Campaigns"
         description="Launch discount promotions, view user claims analytics, and configure checkout codes."
         actions={
           <button
             onClick={handleCreateClick}
-            className="px-5 py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all flex items-center space-x-1.5 cursor-pointer border-0"
+            className="flex cursor-pointer items-center space-x-1.5 rounded-xl border-0 bg-[#FF4D00] px-5 py-2.5 text-[10px] font-bold tracking-wider text-white uppercase transition-all hover:bg-[#E04400]"
           >
             <Plus className="h-4 w-4" />
             <span>Create Coupon</span>
@@ -222,34 +247,46 @@ export default function AdminMarketingCouponsPage() {
       />
 
       {/* Analytics widgets strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           { label: 'Total Used Claims', val: analytics.usageCount, icon: Activity },
-          { label: 'Total Sales Revenue', val: `$${Math.round(analytics.revenueGenerated).toLocaleString()}`, icon: DollarSign },
-          { label: 'Average Discount', val: `$${Math.round(analytics.averageDiscount).toLocaleString()}`, icon: TrendingUp },
+          {
+            label: 'Total Sales Revenue',
+            val: `$${Math.round(analytics.revenueGenerated).toLocaleString()}`,
+            icon: DollarSign,
+          },
+          {
+            label: 'Average Discount',
+            val: `$${Math.round(analytics.averageDiscount).toLocaleString()}`,
+            icon: TrendingUp,
+          },
           { label: 'Most Used Coupon', val: analytics.mostUsedCoupon, icon: Sparkles },
         ].map((met) => {
           const Icon = met.icon;
           return (
-            <div key={met.label} className="p-4 bg-[#0a0a0a] border border-white/5 rounded-2xl flex items-center space-x-3 text-left">
-              <div className="p-2.5 rounded-lg bg-zinc-900 border border-white/5 text-[#FF4D00]">
+            <div
+              key={met.label}
+              className="flex items-center space-x-3 rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 text-left"
+            >
+              <div className="rounded-lg border border-white/5 bg-zinc-900 p-2.5 text-[#FF4D00]">
                 <Icon className="h-4.5 w-4.5" />
               </div>
               <div>
                 <span className="font-num text-lg font-black text-white">{met.val}</span>
-                <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mt-0.5">{met.label}</span>
+                <span className="mt-0.5 block text-[9px] font-bold tracking-wider text-zinc-500 uppercase">
+                  {met.label}
+                </span>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
         {/* Left 2 Columns: Table */}
         <div className="lg:col-span-2">
           <AdminCard>
-            <AdminTable<any>
+            <AdminTable<SafeAny>
               isLoading={loading}
               columns={[
                 { key: 'code', label: 'Promo Code', sortable: true },
@@ -262,7 +299,9 @@ export default function AdminMarketingCouponsPage() {
                   key: 'status',
                   label: 'Status',
                   render: (row) => (
-                    <span className={`px-2 py-0.5 rounded-[3px] text-[8px] font-black uppercase tracking-wider border ${row.status === 'Active' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-zinc-800 border-white/5 text-zinc-500'}`}>
+                    <span
+                      className={`rounded-[3px] border px-2 py-0.5 text-[8px] font-black tracking-wider uppercase ${row.status === 'Active' ? 'border-green-500/20 bg-green-500/10 text-green-500' : 'border-white/5 bg-zinc-800 text-zinc-500'}`}
+                    >
                       {row.status}
                     </span>
                   ),
@@ -274,28 +313,32 @@ export default function AdminMarketingCouponsPage() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditClick(row.raw)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                         title="Edit Coupon"
                       >
                         <Edit3 className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => handleToggleActive(row.id, row.raw.isActive)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                         title={row.raw.isActive ? 'Deactivate Coupon' : 'Activate Coupon'}
                       >
-                        {row.raw.isActive ? <ToggleRight className="h-3.5 w-3.5 text-green-500" /> : <ToggleLeft className="h-3.5 w-3.5 text-zinc-500" />}
+                        {row.raw.isActive ? (
+                          <ToggleRight className="h-3.5 w-3.5 text-green-500" />
+                        ) : (
+                          <ToggleLeft className="h-3.5 w-3.5 text-zinc-500" />
+                        )}
                       </button>
                       <button
                         onClick={() => handleDuplicate(row.id)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-white rounded-lg text-zinc-400 hover:text-white transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-white hover:text-white"
                         title="Duplicate Coupon"
                       >
                         <Copy className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => setDeleteTarget(row.id)}
-                        className="p-1.5 bg-zinc-900 border border-white/5 hover:border-red-500 rounded-lg text-zinc-400 hover:text-red-500 transition-all cursor-pointer"
+                        className="cursor-pointer rounded-lg border border-white/5 bg-zinc-900 p-1.5 text-zinc-400 transition-all hover:border-red-500 hover:text-red-500"
                         title="Delete Coupon"
                       >
                         <Trash className="h-3.5 w-3.5" />
@@ -312,14 +355,14 @@ export default function AdminMarketingCouponsPage() {
 
         {/* Right 1 Column: Editor Panel */}
         {editorOpen ? (
-          <div className="lg:col-span-1 border border-white/5 bg-[#0a0a0a] p-6 rounded-2xl space-y-6">
-            <div className="border-b border-white/5 pb-3 flex justify-between items-center">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[#FF4D00]">
+          <div className="space-y-6 rounded-2xl border border-white/5 bg-[#0a0a0a] p-6 lg:col-span-1">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <h3 className="text-xs font-black tracking-widest text-[#FF4D00] uppercase">
                 {editingCoupon ? 'Edit Coupon' : 'Create Coupon'}
               </h3>
               <button
                 onClick={() => setEditorOpen(false)}
-                className="text-[9px] uppercase tracking-wider text-zinc-400 hover:text-white cursor-pointer bg-transparent border-0"
+                className="cursor-pointer border-0 bg-transparent text-[9px] tracking-wider text-zinc-400 uppercase hover:text-white"
               >
                 ✕ Close
               </button>
@@ -327,21 +370,25 @@ export default function AdminMarketingCouponsPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Promo Code</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Promo Code
+                </label>
                 <input
                   type="text"
                   {...register('code')}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none focus:border-[#FF4D00] uppercase font-mono font-bold"
+                  className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 font-mono font-bold text-white uppercase outline-none focus:border-[#FF4D00]"
                   placeholder="CERAMIC30"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Type</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Type
+                  </label>
                   <select
                     {...register('type')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none cursor-pointer"
+                    className="w-full cursor-pointer rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   >
                     <option value="PERCENTAGE">Percentage</option>
                     <option value="FIXED_AMOUNT">Fixed Amt</option>
@@ -350,34 +397,40 @@ export default function AdminMarketingCouponsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Discount Value</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Discount Value
+                  </label>
                   <input
                     type="number"
                     step="0.01"
                     {...register('value', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Min Cart Value</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Min Cart Value
+                  </label>
                   <input
                     type="number"
                     step="0.01"
                     {...register('minCartValue', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Max Discount</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Max Discount
+                  </label>
                   <input
                     type="number"
                     step="0.01"
                     {...register('maxDiscount', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                     placeholder="None"
                   />
                 </div>
@@ -385,52 +438,62 @@ export default function AdminMarketingCouponsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Max Usage Count</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Max Usage Count
+                  </label>
                   <input
                     type="number"
                     {...register('maxUsageCount', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                     placeholder="Unlimited"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Per User Limit</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Per User Limit
+                  </label>
                   <input
                     type="number"
                     {...register('perUserLimit', { valueAsNumber: true })}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Start Date</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     {...register('startDate')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">End Date</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     {...register('endDate')}
-                    className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none"
+                    className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Status</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                  Status
+                </label>
                 <select
                   {...register('isActive', {
                     setValueAs: (val) => val === 'true',
                   })}
-                  className="w-full bg-black border border-white/10 text-white px-3 py-2 rounded-lg outline-none cursor-pointer"
+                  className="w-full cursor-pointer rounded-lg border border-white/10 bg-black px-3 py-2 text-white outline-none"
                 >
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>
@@ -439,16 +502,18 @@ export default function AdminMarketingCouponsPage() {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#FF4D00] hover:bg-[#E04400] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer border-0 mt-2"
+                className="mt-2 w-full cursor-pointer rounded-xl border-0 bg-[#FF4D00] py-2.5 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-[#E04400]"
               >
                 Save Coupon
               </button>
             </form>
           </div>
         ) : (
-          <div className="lg:col-span-1 border border-dashed border-white/10 bg-black/20 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-3 text-zinc-500">
+          <div className="flex flex-col items-center justify-center space-y-3 rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-center text-zinc-500 lg:col-span-1">
             <Tag className="h-8 w-8 text-zinc-600" />
-            <span className="text-[10px] uppercase font-bold tracking-wider">Select a campaign code to edit, or click create coupon to configure customer discounts</span>
+            <span className="text-[10px] font-bold tracking-wider uppercase">
+              Select a campaign code to edit, or click create coupon to configure customer discounts
+            </span>
           </div>
         )}
       </div>

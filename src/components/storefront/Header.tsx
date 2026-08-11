@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Heart,
-  ShoppingBag,
-  User,
+  CircleUser,
   Menu,
   X,
   LogOut,
   LayoutDashboard,
   History,
+  ShoppingCart,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -31,6 +31,7 @@ const navItems = [
 export function Header() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const isHome = !pathname || pathname === '/';
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -53,15 +54,25 @@ export function Header() {
     };
   }, [accountMenuOpen]);
 
-  const { cart, wishlist, setMiniCartOpen } = useCartStore();
+  const cart = useCartStore((state) => state.cart);
+  const wishlist = useCartStore((state) => state.wishlist);
+  const setMiniCartOpen = useCartStore((state) => state.setMiniCartOpen);
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 28;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -77,14 +88,32 @@ export function Header() {
     }
   };
 
+  const headerStyleClasses = React.useMemo(() => {
+    if (isHome) {
+      if (isScrolled) {
+        return 'border-b border-white/10 bg-black/85 py-2 shadow-lg shadow-black/40 backdrop-blur-xl md:py-2.5';
+      }
+      return 'header-transparent border-b border-transparent py-4 shadow-none md:py-5';
+    }
+    return 'border-b border-white/10 bg-black/85 py-2.5 shadow-lg shadow-black/40 backdrop-blur-xl md:py-2.5';
+  }, [isHome, isScrolled]);
+
+  const transparentInlineStyle = React.useMemo(() => {
+    if (isHome && !isScrolled) {
+      return {
+        backgroundColor: 'rgba(0, 0, 0, 0.15)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+      };
+    }
+    return undefined;
+  }, [isHome, isScrolled]);
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ease-in-out ${
-          isScrolled
-            ? 'border-b border-white/10 bg-black/85 py-2 shadow-lg shadow-black/40 backdrop-blur-xl md:py-2.5'
-            : 'border-b border-transparent bg-transparent py-4 shadow-none md:py-5'
-        }`}
+        style={transparentInlineStyle}
+        className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ease-in-out ${headerStyleClasses}`}
       >
         <div className="relative flex h-9 w-full items-center justify-between px-5 sm:px-8 md:h-11">
           {/* Left: Logo */}
@@ -119,11 +148,11 @@ export function Header() {
           </nav>
 
           {/* Right: Icons */}
-          <div className="flex h-full items-center space-x-4 sm:space-x-5">
+          <div className="flex h-full items-center gap-3 sm:gap-4 md:gap-5">
             {/* Mobile Menu Toggle button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="cursor-pointer border-0 bg-transparent p-1 text-zinc-300 transition-colors hover:text-white lg:hidden"
+              className="inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-zinc-300 transition-colors hover:text-white lg:hidden"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
@@ -132,35 +161,35 @@ export function Header() {
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="cursor-pointer border-0 bg-transparent p-1 text-zinc-300 transition-colors hover:text-white"
+              className="inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-zinc-300 transition-colors hover:text-white"
               aria-label="Search"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-4 w-4" strokeWidth={1.75} />
             </button>
 
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative block p-1 text-zinc-300 transition-colors hover:text-white"
+              className="relative inline-flex items-center justify-center p-1.5 text-zinc-300 transition-colors hover:text-white"
               aria-label="Wishlist"
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="h-4 w-4" strokeWidth={1.75} />
               {wishlistCount > 0 && (
-                <span className="font-num absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[#FF4D00] text-[7px] font-black text-white">
+                <span className="font-num absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-[#FF4D00] text-[7px] font-black text-white">
                   {wishlistCount}
                 </span>
               )}
             </Link>
 
-            {/* MiniCart Trigger */}
+            {/* MiniCart Trigger — detailing spray bottle */}
             <button
               onClick={() => setMiniCartOpen(true)}
-              className="relative block cursor-pointer border-0 bg-transparent p-1 text-zinc-300 transition-colors hover:text-white"
+              className="relative inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-zinc-300 transition-colors hover:text-white"
               aria-label="Cart"
             >
-              <ShoppingBag className="h-4 w-4" />
+              <ShoppingCart className="h-4 w-4" />
               {cartCount > 0 && (
-                <span className="font-num absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[#FF4D00] text-[7px] font-black text-white">
+                <span className="font-num absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-[#FF4D00] text-[7px] font-black text-white">
                   {cartCount}
                 </span>
               )}
@@ -170,10 +199,10 @@ export function Header() {
             <div className="relative" ref={accountMenuRef}>
               <button
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                className="block cursor-pointer border-0 bg-transparent p-1 text-zinc-300 transition-colors hover:text-white"
+                className="inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-zinc-300 transition-colors hover:text-white"
                 aria-label="Profile"
               >
-                <User className="h-4 w-4" />
+                <CircleUser className="h-4 w-4" strokeWidth={1.75} />
               </button>
 
               <AnimatePresence>
@@ -298,39 +327,44 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-4 py-8 backdrop-blur-md sm:px-6"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search catalog"
           >
             <button
               onClick={() => setSearchOpen(false)}
-              className="absolute top-6 right-6 cursor-pointer rounded-lg border border-white/10 bg-zinc-900 p-2 text-zinc-400 transition-all hover:border-white hover:text-white"
+              className="absolute top-4 right-4 inline-flex cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-zinc-900/80 p-2.5 text-zinc-400 transition-all hover:border-white/40 hover:text-white sm:top-6 sm:right-6"
+              aria-label="Close search"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <div className="w-full max-w-2xl space-y-6 text-center">
-              <span className="text-[10px] font-black tracking-[0.3em] text-[#FF4D00] uppercase">
+            <div className="w-full max-w-xl space-y-5 text-center sm:max-w-2xl sm:space-y-6">
+              <span className="block text-[10px] font-black tracking-[0.3em] text-[#FF4D00] uppercase">
                 Search Catalog
               </span>
               <form
                 onSubmit={handleSearchSubmit}
-                className="relative flex items-center border-b-2 border-white/10 pb-3 transition-colors focus-within:border-[#FF4D00]"
+                className="relative flex items-center gap-3 border-b-2 border-white/10 pb-3.5 transition-colors focus-within:border-[#FF4D00]"
               >
+                <Search className="pointer-events-none h-5 w-5 shrink-0 text-zinc-500 sm:h-6 sm:w-6" />
                 <input
                   type="text"
                   placeholder="What detailing solution are you looking for?"
                   value={searchVal}
                   onChange={(e) => setSearchVal(e.target.value)}
-                  className="w-full border-none bg-transparent text-center text-xl font-light text-white placeholder-zinc-700 outline-none sm:text-2xl"
+                  className="min-w-0 flex-1 border-none bg-transparent text-left text-lg font-light text-white placeholder-zinc-600 outline-none sm:text-2xl"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="absolute right-0 cursor-pointer border-0 bg-transparent text-zinc-400 hover:text-white"
+                  className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[9px] font-black tracking-widest text-white uppercase transition-colors hover:border-[#FF4D00]/50 hover:bg-[#FF4D00]/15 hover:text-[#FF4D00]"
                 >
-                  <Search className="h-6 w-6" />
+                  Go
                 </button>
               </form>
-              <p className="text-[10px] tracking-widest text-zinc-500 uppercase">
+              <p className="px-2 text-[9px] leading-relaxed tracking-widest text-zinc-500 uppercase sm:text-[10px]">
                 Press Enter to search by item name or variant SKU
               </p>
             </div>
